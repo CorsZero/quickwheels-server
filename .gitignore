@@ -1,118 +1,369 @@
-# QuickWheels - server .gitignore
-# =============================
-# Professional, comprehensive ignores for Node/Express server development.
+# QuickWheels - Unified .gitignore for all services
 
-# Node / JavaScript
+###################
+# Operating System
+###################
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+.directory
+.Trash-*
+
+###################
+# IDEs & Editors
+###################
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# JetBrains IDEs (Rider, WebStorm, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+###################
+# .NET / C# (Auth Service)
+###################
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework
+*.edmx.diagram
+*.edmx.sql
+Migrations/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# Publish profiles
+*.pubxml
+*.publishproj
+
+###################
+# Node.js (Vehicle & Booking Services)
+###################
+
+# Dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnp.*
+jspm_packages/
+bower_components/
+
+# Production build
+dist/
+build/
+out/
+.next/
+.nuxt/
 
 # Logs
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# Runtime data
 pids/
 *.pid
 *.seed
-debug.log*
+*.pid.lock
 
-# Runtime / build outputs
-dist/
-build/
-out/
-lib/
-es/
-cjs/
-*.tsbuildinfo
-/.parcel-cache/
-.next/
-
-# Coverage
+# Coverage directory
 coverage/
+*.lcov
 .nyc_output/
+lib-cov/
 
-# Test caches & tooling
+# Testing
+.grunt/
 .cache/
-.jest/
-.eslintcache
+.parcel-cache/
+.cypress/
+cypress/videos/
+cypress/screenshots/
 
-# Environment / secret files - never commit secrets
-.env
-.env.*.local
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Misc
 .env.test
+.env.production
+.npm
+.eslintcache
+.stylelintcache
+.yarn/
+.pnp.*
 
-# OS generated files
-.DS_Store
-Thumbs.db
-Desktop.ini
-ehthumbs.db
-Icon?
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
 
-# Editors / IDEs
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-*.code-workspace
-.history/
+# Webpack
+.webpack/
 
-# JetBrains
-*.iml
+###################
+# Databases
+###################
 
-# Editor temporary files
-*~
+# MongoDB
+*.mongodb
+*.bson
+
+# SQL Server
+*.mdf
+*.ldf
+*.ndf
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+*.pgsql
+pgdata/
+
+###################
+# Environment & Configuration
+###################
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+*.env
+.env.*
+!.env.example
+
+# Configuration files with secrets
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+config/local.json
+config/production.json
+
+###################
+# Logs & Temporary Files
+###################
+
+# Logs
+logs/
+*.log
+log/
+*.log.*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
 *.swp
 *.swo
+*~
 
-# SSL / certs
+###################
+# Package Managers
+###################
+
+# npm
+package-lock.json
+npm-debug.log*
+
+# Yarn
+yarn.lock
+.yarn/
+.pnp.*
+
+# pnpm
+pnpm-lock.yaml
+
+###################
+# Docker
+###################
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+###################
+# Security & Secrets
+###################
+
+# SSL Certificates
 *.pem
 *.key
 *.crt
+*.cer
 *.p12
+*.pfx
 
-# Database files
-*.sqlite
-*.sqlite3
-*.db
-dump.sql
+# SSH Keys
+id_rsa
+id_rsa.pub
+*.ppk
 
-# Docker
-docker-compose.override.yml
-.env.docker
+# API Keys & Secrets
+secrets.json
+*.secret
+credentials.json
 
-# Transport / packaging
-*.tgz
+###################
+# Cloud & Deployment
+###################
 
-# Misc generated files
-thumbs.db
-*.log.*
+# AWS
+.aws/
+.elasticbeanstalk/
 
-# Supabase local files
-.supabase/
+# Azure
+.azure/
 
-# Build system caches
-.turbo/
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
 
-# Optional lockfiles (uncomment if you want to ignore lockfiles)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+###################
+# Service-Specific
+###################
 
-# Node-gyp
-build/
+# Auth Service (.NET)
+auth-service/bin/
+auth-service/obj/
+auth-service/.vs/
+auth-service/appsettings.Development.json
+auth-service/appsettings.Production.json
+auth-service/*.db
 
-# Keys / secrets / credentials
-.secret
-secrets/
-.vault/
+# Vehicle Service (Node.js)
+vehicle-service/node_modules/
+vehicle-service/dist/
+vehicle-service/.env
+vehicle-service/*.log
 
-# Local npm debug
-npm-debug.log*
+# Booking Service (Node.js)
+booking-service/node_modules/
+booking-service/dist/
+booking-service/.env
+booking-service/*.log
 
-# End of .gitignore
+###################
+# Misc
+###################
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Media files (if not needed in repo)
+uploads/
+public/uploads/
