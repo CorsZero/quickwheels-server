@@ -1,32 +1,31 @@
 version: "3.8"
 
 services:
-  # auth-service:
-  #   image: yujiro2hanma/quickwheels-auth:latest
-  #   container_name: quickwheels-auth-service
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     # Use Host=postgres (Docker service name, NOT localhost)
-  #     DefaultConnection: "Host=postgres;Port=5432;Database=quickwheels_auth_db;Username=quickwheels_admin;Password=QuickWheels2025Dev"
-  #     SecretKey: "$SecretKey"
-  #     Issuer: "quickwheels-auth-service"
-  #     Audience: "quickwheels-api"
-  #     ExpirationMinutes: "60"
-  #     RefreshTokenExpirationDays: "7"
-  #     SmtpHost: "smtp.gmail.com"
-  #     SmtpPort: "587"
-  #     SmtpUsername: "${SmtpUsername}"
-  #     SmtpPassword: "${SmtpPassword}"
-  #     FromEmail: "${FromEmail}"
-  #     FromName: "${FromName}"
+  auth-service:
+    image: yujiro2hanma/quickwheels-auth:latest
+    container_name: quickwheels-auth-service
+    ports:
+      - "5000:5000"
+    environment:
+      DefaultConnection: "Host=postgres;Port=5432;Database=quickwheels_auth_db;Username=quickwheels_admin;Password=QuickWheels2025Dev"
+      SecretKey: "$SecretKey"
+      Issuer: "quickwheels-auth-service"
+      Audience: "quickwheels-api"
+      ExpirationMinutes: "60"
+      RefreshTokenExpirationDays: "7"
+      SmtpHost: "smtp.gmail.com"
+      SmtpPort: "587"
+      SmtpUsername: "${SmtpUsername}"
+      SmtpPassword: "${SmtpPassword}"
+      FromEmail: "${FromEmail}"
+      FromName: "${FromName}"
 
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   networks:
-  #     - quickwheels-network
-  #   restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
 
   postgres:
     image: postgres:16-alpine
