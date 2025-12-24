@@ -63,7 +63,8 @@ public class LoginHandler
             {
                 user.Id,
                 user.Email,
-                user.Name,
+                user.FullName,
+                user.Phone,
                 Role = user.Role.ToString()
             }
         }, "Login successful");

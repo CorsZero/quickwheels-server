@@ -5,6 +5,7 @@ using sevaLK_service_auth.Auth.Logout;
 using sevaLK_service_auth.Auth.RefreshToken;
 using sevaLK_service_auth.Auth.Register;
 using sevaLK_service_auth.Auth.ResetPassword;
+using sevaLK_service_auth.Auth.Profile;
 using sevaLK_service_auth.Infra;
 using sevaLK_service_auth.Infra.Config;
 using sevaLK_service_auth.Shared.Middlewares;
@@ -31,6 +32,9 @@ builder.Services.AddScoped<LogoutHandler>();
 builder.Services.AddScoped<RefreshTokenHandler>();
 builder.Services.AddScoped<ChangePasswordHandler>();
 builder.Services.AddScoped<ResetPasswordHandler>();
+// Profile handlers
+builder.Services.AddScoped<GetCurrentProfileHandler>();
+builder.Services.AddScoped<UpdateProfileHandler>();
 
 var app = builder.Build();
 

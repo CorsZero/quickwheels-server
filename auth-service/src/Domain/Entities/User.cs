@@ -6,7 +6,8 @@ public class User
 {
     public Guid Id { get; private set; }
     public string Email { get; private set; } = null!;
-    public string Name { get; private set; } = null!;
+    public string FullName { get; private set; } = null!;
+    public string Phone { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
     public UserRole Role { get; private set; }
     public bool IsActive { get; private set; }
@@ -21,11 +22,12 @@ public class User
     // EF Core constructor
     private User() { }
 
-    public User(string email, string name, string passwordHash, UserRole role)
+    public User(string email, string fullName, string phone, string passwordHash, UserRole role)
     {
         Id = Guid.NewGuid();
         Email = email ?? throw new ArgumentNullException(nameof(email));
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        FullName = fullName ?? throw new ArgumentNullException(nameof(fullName));
+        Phone = phone ?? throw new ArgumentNullException(nameof(phone));
         PasswordHash = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
         Role = role;
         IsActive = true;
@@ -92,5 +94,20 @@ public class User
         return !string.IsNullOrEmpty(PasswordResetToken) &&
                PasswordResetTokenExpiry.HasValue &&
                PasswordResetTokenExpiry.Value > DateTime.UtcNow;
+    }
+
+    public void UpdateProfile(string? fullName, string? phone)
+    {
+        if (!string.IsNullOrEmpty(fullName) && fullName != FullName)
+        {
+            FullName = fullName;
+        }
+
+        if (!string.IsNullOrEmpty(phone) && phone != Phone)
+        {
+            Phone = phone;
+        }
+
+        UpdatedAt = DateTime.UtcNow;
     }
 }

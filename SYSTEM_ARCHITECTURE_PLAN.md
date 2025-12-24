@@ -105,9 +105,9 @@ CREATE TABLE Users (
     Email           VARCHAR(255) UNIQUE NOT NULL,
     PasswordHash    VARCHAR(512) NOT NULL,
     FullName        VARCHAR(255) NOT NULL,
-    Phone           VARCHAR(20) NOT NULL,
+    Phone           VARCHAR(20) NOT NULL,//
     NIC             VARCHAR(20) UNIQUE NOT NULL,
-    Role            VARCHAR(20) DEFAULT 'USER',  -- 'USER' or 'ADMIN'
+    Role            VARCHAR(20) DEFAULT 'USER',  -- 'USER' or 'ADMIN'//
     IsActive        BOOLEAN DEFAULT TRUE,
     CreatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UpdatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP

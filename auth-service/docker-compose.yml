@@ -5,7 +5,7 @@ services:
   #   image: yujiro2hanma/quickwheels-auth:latest
   #   container_name: quickwheels-auth-service
   #   ports:
-  #     - "3000:3000"
+  #     - "5000:5000"
   #   environment:
   #     # Use Host=postgres (Docker service name, NOT localhost)
   #     DefaultConnection: "Host=postgres;Port=5432;Database=quickwheels_auth_db;Username=quickwheels_admin;Password=QuickWheels2025Dev"
@@ -50,28 +50,8 @@ services:
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: quickwheels-auth-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@quickwheels.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    networks:
-      - quickwheels-network
-    restart: unless-stopped
-    depends_on:
-      - postgres
-
 volumes:
   postgres_data:
-    driver: local
-  pgadmin_data:
     driver: local
 
 networks:
