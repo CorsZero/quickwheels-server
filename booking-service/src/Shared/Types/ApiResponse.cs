@@ -1,31 +1,18 @@
-namespace booking_service.Shared.Types;
+﻿namespace booking_service.Shared.Types;
 
 public class ApiResponse
 {
     public bool Success { get; set; }
-    public string Message { get; set; } = string.Empty;
     public object? Data { get; set; }
-    public object? Error { get; set; }
+    public string? Error { get; set; }
 
-    public static ApiResponse SuccessResult(object? data = null, string message = "Request successful")
+    public static ApiResponse Success(object data)
     {
-        return new ApiResponse
-        {
-            Success = true,
-            Message = message,
-            Data = data,
-            Error = null
-        };
+        return new ApiResponse { Success = true, Data = data };
     }
 
-    public static ApiResponse ErrorResult(string message, object? error = null)
+    public static ApiResponse Error(string error)
     {
-        return new ApiResponse
-        {
-            Success = false,
-            Message = message,
-            Data = null,
-            Error = error ?? new List<string>()
-        };
+        return new ApiResponse { Success = false, Error = error };
     }
 }
