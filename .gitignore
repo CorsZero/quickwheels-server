@@ -282,7 +282,7 @@ pnpm-lock.yaml
 ###################
 
 # Docker
-.dockerignore
+
 docker-compose.override.yml
 
 ###################
@@ -334,17 +334,25 @@ auth-service/.vs/
 auth-service/appsettings.Development.json
 auth-service/appsettings.Production.json
 auth-service/*.db
+auth-service/.env
+auth-service/.env.local
 
 # Vehicle Service (Node.js)
 vehicle-service/node_modules/
 vehicle-service/dist/
 vehicle-service/.env
+vehicle-service/.env.local
 vehicle-service/*.log
 
-# Booking Service (Node.js)
-booking-service/node_modules/
-booking-service/dist/
+# Booking Service (.NET)
+booking-service/bin/
+booking-service/obj/
+booking-service/.vs/
+booking-service/appsettings.Development.json
+booking-service/appsettings.Production.json
+booking-service/*.db
 booking-service/.env
+booking-service/.env.local
 booking-service/*.log
 
 ###################
