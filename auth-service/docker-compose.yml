@@ -51,6 +51,7 @@ services:
 
 volumes:
   postgres_data:
+    name: quickwheels_auth_postgres_data
     driver: local
 
 networks:

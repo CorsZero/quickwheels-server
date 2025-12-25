@@ -1,4 +1,4 @@
-namespace sevaLK_service_auth.Domain.Objects;
+namespace booking_service.Domain.Objects;
 
 public interface IEmailService
 {

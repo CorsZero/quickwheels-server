@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 
-namespace sevaLK_service_auth.Domain.Objects;
+namespace booking_service.Domain.Objects;
 
 public class EmailService : IEmailService
 {

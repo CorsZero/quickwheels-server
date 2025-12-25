@@ -10,4 +10,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "sevaLK-service-auth.dll"]
+ENTRYPOINT ["dotnet", "booking-service.dll"]

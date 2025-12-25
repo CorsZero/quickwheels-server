@@ -1,4 +1,4 @@
-namespace sevaLK_service_auth.Infra.Security;
+namespace booking_service.Infra.Security;
 
 public interface IPasswordHasher
 {

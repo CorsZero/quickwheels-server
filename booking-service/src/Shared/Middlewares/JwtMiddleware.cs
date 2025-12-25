@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using sevaLK_service_auth.Infra.Security;
+using booking_service.Infra.Security;
 
-namespace sevaLK_service_auth.Shared.Middlewares;
+namespace booking_service.Shared.Middlewares;
 
 public class JwtMiddleware
 {

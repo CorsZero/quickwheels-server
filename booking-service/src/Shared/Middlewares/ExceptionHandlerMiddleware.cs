@@ -1,7 +1,8 @@
 using System.Net;
 using System.Text.Json;
+using booking_service.Shared.Types;
 
-namespace sevaLK_service_auth.Shared.Middlewares;
+namespace booking_service.Shared.Middlewares;
 
 public class ExceptionHandlerMiddleware
 {

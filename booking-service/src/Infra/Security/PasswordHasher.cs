@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace sevaLK_service_auth.Infra.Security;
+namespace booking_service.Infra.Security;
 
 public class PasswordHasher : IPasswordHasher
 {

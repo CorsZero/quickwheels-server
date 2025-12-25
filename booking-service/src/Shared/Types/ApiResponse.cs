@@ -1,4 +1,4 @@
-namespace sevaLK_service_auth.Shared.Middlewares;
+namespace booking_service.Shared.Types;
 
 public class ApiResponse
 {
