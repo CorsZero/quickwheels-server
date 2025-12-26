@@ -1,3 +1,0 @@
-# Types
-
-This directory contains shared type definitions and interfaces.

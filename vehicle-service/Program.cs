@@ -1,41 +1,47 @@
+using Microsoft.EntityFrameworkCore;
+using vehicle_service.Infra;
+using vehicle_service.Infra.Config;
+using vehicle_service.Shared.Middlewares;
+
+// Load environment variables from .env file
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.WebHost.UseKestrel();
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Infrastructure - Database, Repositories, Handlers, Security
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Add exception handler middleware (must be early in pipeline)
+app.UseExceptionHandlerMiddleware();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Add JWT middleware for token extraction
+app.UseJwtMiddleware();
 
-app.MapGet("/weatherforecast", () =>
+// Auto-create database
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var db = scope.ServiceProvider.GetRequiredService<VehicleDbContext>();
+    db.Database.EnsureCreated();
+}
+
+app.MapGet("/health", () => Results.Ok(new { status = "Vehicle Service is Healthy", time = DateTime.UtcNow }));
+
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
