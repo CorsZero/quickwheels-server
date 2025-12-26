@@ -83,12 +83,12 @@ QuickWheels is a vehicle rental platform where users can list their vehicles and
     ┌────▼───┐   ┌───▼────┐  ┌────▼──────┐
     │  Auth  │   │Vehicle │  │  Booking  │
     │Service │   │Service │  │  Service  │
-    │ .NET   │   │Node.js │  │   .NET    │
+    │ .NET   │   │ .NET   │  │   .NET    │
     │:5000   │   │ :5001  │  │   :5002   │
     └────┬───┘   └───┬────┘  └────┬──────┘
          │           │            │
     ┌────▼───┐  ┌───▼────┐  ┌────▼──────┐
-    │SQL/PG  │  │MongoDB │  │  SQL/PG   │
+    │  PG    │  │   PG   │  │    PG     │
     │Auth DB │  │Vehicle │  │ Booking   │
     │        │  │   DB   │  │    DB     │
     └────────┘  └────────┘  └───────────┘
@@ -105,7 +105,7 @@ This section consolidates all database tables from all three services in one pla
 | Service             | Database Type | Database Name            | Tables/Collections | Total Indexes |
 | ------------------- | ------------- | ------------------------ | ------------------ | ------------- |
 | **Auth Service**    | PostgreSQL    | `quickwheels_auth_db`    | Users              | 1 index       |
-| **Vehicle Service** | MongoDB       | `quickwheels_vehicle_db` | Vehicles           | 7 indexes     |
+| **Vehicle Service** | PostgreSQL    | `quickwheels_vehicle_db` | Vehicles           | 7 indexes     |
 | **Booking Service** | PostgreSQL    | `quickwheels_booking_db` | Bookings           | 4 indexes     |
 
 ---
@@ -168,33 +168,33 @@ CREATE INDEX idx_users_email ON Users(Email);
 
 ---
 
-### 2️⃣ Vehicle Service Database (MongoDB)
+### 2️⃣ Vehicle Service Database (PostgreSQL)
 
 **Database:** `quickwheels_vehicle_db`
 
-#### Collection: Vehicles
+#### Table: Vehicles
 
-| Field        | Type          | Required | Description                                     |
-| ------------ | ------------- | -------- | ----------------------------------------------- |
-| \_id         | ObjectId      | Auto     | MongoDB document ID                             |
-| ownerId      | String        | Yes      | Reference to User ID (Extracted from JWT)       |
-| make         | String        | Yes      | Vehicle manufacturer (Toyota, Honda, etc.)      |
-| model        | String        | Yes      | Vehicle model (Corolla, Civic, etc.)            |
-| year         | Number        | Yes      | Manufacturing year                              |
-| category     | String        | Yes      | 'CAR', 'VAN', 'SUV', 'BIKE'                     |
-| transmission | String        | Yes      | 'MANUAL', 'AUTOMATIC'                           |
-| fuelType     | String        | Yes      | 'PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'        |
-| seats        | Number        | Yes      | Number of seats                                 |
-| pricePerDay  | Number        | Yes      | Daily rental price                              |
-| location     | String        | Yes      | City/Location                                   |
-| district     | String        | Yes      | District name                                   |
-| description  | String        | No       | Vehicle description                             |
-| features     | Array<String> | No       | ['AC', 'GPS', 'Bluetooth', etc.]                |
-| images       | Array<String> | No       | Array of image URLs                             |
-| status       | String        | Yes      | 'AVAILABLE', 'RENTED', 'MAINTENANCE', 'REMOVED' |
-| isActive     | Boolean       | Yes      | Admin can deactivate (default: true)            |
-| createdAt    | Date          | Auto     | Creation timestamp                              |
-| updatedAt    | Date          | Auto     | Last update timestamp                           |
+| Column       | Type         | Constraints   | Description                                     |
+| ------------ | ------------ | ------------- | ----------------------------------------------- |
+| Id           | VARCHAR(36)  | PRIMARY KEY   | Vehicle identifier (UUID)                       |
+| OwnerId      | VARCHAR(36)  | NOT NULL      | Reference to User ID (Extracted from JWT)       |
+| Make         | VARCHAR(100) | NOT NULL      | Vehicle manufacturer (Toyota, Honda, etc.)      |
+| Model        | VARCHAR(100) | NOT NULL      | Vehicle model (Corolla, Civic, etc.)            |
+| Year         | INT          | NOT NULL      | Manufacturing year                              |
+| Category     | VARCHAR(20)  | NOT NULL      | 'CAR', 'VAN', 'SUV', 'BIKE'                     |
+| Transmission | VARCHAR(20)  | NOT NULL      | 'MANUAL', 'AUTOMATIC'                           |
+| FuelType     | VARCHAR(20)  | NOT NULL      | 'PETROL', 'DIESEL', 'ELECTRIC', 'HYBRID'        |
+| Seats        | INT          | NOT NULL      | Number of seats                                 |
+| PricePerDay  | DECIMAL      | NOT NULL      | Daily rental price                              |
+| Location     | VARCHAR(100) | NOT NULL      | City/Location                                   |
+| District     | VARCHAR(100) | NOT NULL      | District name                                   |
+| Description  | TEXT         | NULL          | Vehicle description                             |
+| Features     | TEXT         | NULL          | JSON array: ['AC', 'GPS', 'Bluetooth', etc.]    |
+| Images       | TEXT         | NULL          | JSON array of image URLs                        |
+| Status       | VARCHAR(20)  | NOT NULL      | 'AVAILABLE', 'RENTED', 'MAINTENANCE', 'REMOVED' |
+| IsActive     | BOOLEAN      | DEFAULT TRUE  | Admin can deactivate (default: true)            |
+| CreatedAt    | TIMESTAMP    | DEFAULT NOW() | Creation timestamp                              |
+| UpdatedAt    | TIMESTAMP    | NULL          | Last update timestamp                           |
 
 **Status Values:**
 
@@ -205,23 +205,57 @@ CREATE INDEX idx_users_email ON Users(Email);
 
 **Indexes:**
 
-```javascript
-db.vehicles.createIndex({ ownerId: 1 });
-db.vehicles.createIndex({ location: 1, district: 1 });
-db.vehicles.createIndex({ status: 1, isActive: 1 });
-db.vehicles.createIndex({ pricePerDay: 1 });
-db.vehicles.createIndex({ category: 1 });
-db.vehicles.createIndex({ createdAt: -1 });
-db.vehicles.createIndex({
-  make: "text",
-  model: "text",
-  description: "text",
-}); // Text search index
+- `idx_vehicles_owner` on OwnerId (owner's listings)
+- `idx_vehicles_location` on (Location, District) (location searches)
+- `idx_vehicles_status` on (Status, IsActive) (filter available vehicles)
+- `idx_vehicles_price` on PricePerDay (price range searches)
+- `idx_vehicles_category` on Category (category filters)
+- `idx_vehicles_created` on CreatedAt DESC (recent listings)
+- Full-text search index on (Make, Model, Description) (text search)
+
+**SQL Schema:**
+
+```sql
+CREATE TABLE Vehicles (
+    Id              VARCHAR(36) PRIMARY KEY,
+    OwnerId         VARCHAR(36) NOT NULL,
+    Make            VARCHAR(100) NOT NULL,
+    Model           VARCHAR(100) NOT NULL,
+    Year            INT NOT NULL,
+    Category        VARCHAR(20) NOT NULL,
+    Transmission    VARCHAR(20) NOT NULL,
+    FuelType        VARCHAR(20) NOT NULL,
+    Seats           INT NOT NULL,
+    PricePerDay     DECIMAL(10,2) NOT NULL,
+    Location        VARCHAR(100) NOT NULL,
+    District        VARCHAR(100) NOT NULL,
+    Description     TEXT,
+    Features        TEXT,
+    Images          TEXT,
+    Status          VARCHAR(20) NOT NULL DEFAULT 'AVAILABLE',
+    IsActive        BOOLEAN DEFAULT TRUE,
+    CreatedAt       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt       TIMESTAMP
+);
+
+CREATE INDEX idx_vehicles_owner ON Vehicles(OwnerId);
+CREATE INDEX idx_vehicles_location ON Vehicles(Location, District);
+CREATE INDEX idx_vehicles_status ON Vehicles(Status, IsActive);
+CREATE INDEX idx_vehicles_price ON Vehicles(PricePerDay);
+CREATE INDEX idx_vehicles_category ON Vehicles(Category);
+CREATE INDEX idx_vehicles_created ON Vehicles(CreatedAt DESC);
 ```
+
+**Design Notes:**
+
+- Features and Images stored as JSON text (can be parsed to arrays)
+- Category, Transmission, FuelType, Status stored as string enums
+- PricePerDay uses DECIMAL for precise currency values
+- Status defaults to 'AVAILABLE' on creation
 
 **Cross-Service References:**
 
-- `ownerId` → Auth Service `Users.Id`
+- `OwnerId` → Auth Service `Users.Id`
 
 ---
 
@@ -326,7 +360,7 @@ CREATE INDEX idx_bookings_dates ON Bookings(StartDate, EndDate);
                        │                                 │ │
                        │  References Auth Users ←────────┘ │
                        └───────────────────────────────────┘
-                            ownerId → Users.Id (from JWT)
+                            OwnerId → Users.Id (from JWT)
 ```
 
 **Data Retrieval Pattern:**
@@ -595,9 +629,9 @@ Response: 200 OK
 
 ## Service 2: Vehicle Service
 
-**Technology:** Node.js + Express + TypeScript  
+**Technology:** .NET 9.0 (C#)  
 **Port:** 5001  
-**Database:** MongoDB (`quickwheels_vehicle_db`)  
+**Database:** PostgreSQL (`quickwheels_vehicle_db`)  
 **Responsibility:** Vehicle catalog, listings, and search
 
 **📊 Database Schema:** See [Database Schema Reference](#database-schema-reference) - Section 2️⃣
@@ -1201,11 +1235,11 @@ Response: 200 OK
 
 #### Vehicle Service
 
-- **Runtime:** Node.js 20+ with TypeScript
-- **Framework:** Express.js
-- **Database:** MongoDB
-- **ODM:** Mongoose
-- **Validation:** Joi / Zod
+- **Runtime:** .NET 9.0 (C#)
+- **Database:** PostgreSQL
+- **ORM:** Entity Framework Core
+- **Validation:** Data Annotations
+- **Authentication:** JWT (Bearer tokens)
 
 #### Booking Service
 
@@ -1218,8 +1252,8 @@ Response: 200 OK
 ### Common Tools
 
 - **API Documentation:** Swagger/OpenAPI
-- **Environment Management:** dotenv
-- **Logging:** Winston (Node.js), Serilog (.NET)
+- **Environment Management:** dotenv (.env files)
+- **Logging:** Serilog (.NET), Console logging
 - **CORS:** Configured for cross-origin requests
 - **Containerization:** Docker (optional)
 
@@ -1443,10 +1477,9 @@ For real-time updates and better scalability, consider event-driven communicatio
 
 ### Prerequisites
 
-- Node.js 20+ (for Vehicle Service)
-- .NET 9.0 SDK (for Auth and Booking Services)
-- MongoDB (for Vehicle Service)
-- SQL Server / PostgreSQL (for Auth and Booking Services)
+- .NET 9.0 SDK (for all services)
+- PostgreSQL 14+ (for all services)
+- Visual Studio 2022 / VS Code (recommended IDE)
 
 ### Installation Steps
 
@@ -1460,7 +1493,7 @@ For real-time updates and better scalability, consider event-driven communicatio
 2. **Setup Auth Service**
 
    ```bash
-   cd sevaLK-service-auth
+   cd auth-service
    dotnet restore
    dotnet run
    ```
@@ -1469,8 +1502,8 @@ For real-time updates and better scalability, consider event-driven communicatio
 
    ```bash
    cd vehicle-service
-   npm install
-   npm run dev
+   dotnet restore
+   dotnet run
    ```
 
 4. **Setup Booking Service**
