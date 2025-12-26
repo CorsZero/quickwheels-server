@@ -21,19 +21,19 @@ public class CheckAvailabilityController : ControllerBase
         [FromQuery] DateTime endDate)
     {
         if (startDate >= endDate)
-            return BadRequest(ApiResponse.Error("Start date must be before end date"));
+            return BadRequest(ApiResponse.ErrorResult("Start date must be before end date"));
 
         if (startDate < DateTime.UtcNow.Date)
-            return BadRequest(ApiResponse.Error("Start date cannot be in the past"));
+            return BadRequest(ApiResponse.ErrorResult("Start date cannot be in the past"));
 
         try
         {
             var result = await _handler.Handle(vehicleId, startDate, endDate);
-            return Ok(ApiResponse.Success(result));
+            return Ok(ApiResponse.SuccessResult(result));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ApiResponse.Error("An error occurred while checking availability"));
+            return StatusCode(500, ApiResponse.ErrorResult("An error occurred while checking availability"));
         }
     }
 }

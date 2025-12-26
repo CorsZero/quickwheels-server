@@ -19,16 +19,16 @@ public class GetMyRentalsController : ControllerBase
     {
         var userId = HttpContext.Items["UserId"] as Guid?;
         if (!userId.HasValue)
-            return Unauthorized(ApiResponse.Error("Unauthorized"));
+            return Unauthorized(ApiResponse.ErrorResult("Unauthorized"));
 
         try
         {
             var result = await _handler.Handle(userId.Value, status, page, limit);
-            return Ok(ApiResponse.Success(result));
+            return Ok(ApiResponse.SuccessResult(result));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ApiResponse.Error("An error occurred while fetching rentals"));
+            return StatusCode(500, ApiResponse.ErrorResult("An error occurred while fetching rentals"));
         }
     }
 }

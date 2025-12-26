@@ -19,14 +19,14 @@ public class StartRentalHandler
             return null;
 
         if (!ownerVehicleIds.Contains(booking.VehicleId))
-            throw new UnauthorizedAccessException(""You do not have permission to start this rental"");
+            throw new UnauthorizedAccessException("You do not have permission to start this rental");
 
         booking.StartRental();
         await _bookingRepository.UpdateAsync(booking);
 
         return new
         {
-            message = ""Rental started"",
+            message = "Rental started",
             booking = new
             {
                 id = booking.Id,

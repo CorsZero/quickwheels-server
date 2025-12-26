@@ -19,24 +19,22 @@ public class CreateBookingController : ControllerBase
     {
         var userId = HttpContext.Items["UserId"] as Guid?;
         if (!userId.HasValue)
-            return Unauthorized(ApiResponse.Error("Unauthorized"));
+            return Unauthorized(ApiResponse.ErrorResult("Unauthorized"));
 
         try
         {
             var result = await _handler.Handle(request, userId.Value);
-            return Created("", ApiResponse.Success(result));
+            return Created("", ApiResponse.SuccessResult(result));
         }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ApiResponse.Error(ex.Message));
+        catch (ArgumentException ex) {
+            return BadRequest(ApiResponse.ErrorResult(ex.Message));
         }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(ApiResponse.Error(ex.Message));
+        catch (InvalidOperationException ex) {
+            return Conflict(ApiResponse.ErrorResult(ex.Message));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ApiResponse.Error("An error occurred while creating the booking"));
+            return StatusCode(500, ApiResponse.ErrorResult("An error occurred while creating the booking"));
         }
     }
 }

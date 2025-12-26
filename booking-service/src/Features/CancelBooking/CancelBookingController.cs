@@ -19,28 +19,27 @@ public class CancelBookingController : ControllerBase
     {
         var userId = HttpContext.Items["UserId"] as Guid?;
         if (!userId.HasValue)
-            return Unauthorized(ApiResponse.Error("Unauthorized"));
+            return Unauthorized(ApiResponse.ErrorResult("Unauthorized"));
 
         try
         {
             var result = await _handler.Handle(bookingId, userId.Value);
             
             if (result == null)
-                return NotFound(ApiResponse.Error("Booking not found"));
+                return NotFound(ApiResponse.ErrorResult("Booking not found"));
 
-            return Ok(ApiResponse.Success(result));
+            return Ok(ApiResponse.SuccessResult(result));
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ApiResponse.Error(ex.Message));
+        catch (InvalidOperationException ex) {
+            return BadRequest(ApiResponse.ErrorResult(ex.Message));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ApiResponse.Error("An error occurred while cancelling the booking"));
+            return StatusCode(500, ApiResponse.ErrorResult("An error occurred while cancelling the booking"));
         }
     }
 }

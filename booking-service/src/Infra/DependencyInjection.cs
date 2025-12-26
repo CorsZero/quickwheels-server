@@ -23,7 +23,10 @@ public static class DependencyInjection
     {
         // Database
         services.AddDbContext<BookingDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(
+                configuration["DefaultConnection"],
+                npgsqlOptions => npgsqlOptions.MigrationsAssembly("booking-service")
+            ));
 
         // Repositories
         services.AddScoped<IBookingRepository, BookingRepository>();
