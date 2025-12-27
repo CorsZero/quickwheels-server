@@ -42,7 +42,7 @@ public class ResetPasswordHandler
         // Send password reset email
         try
         {
-            await _emailService.SendPasswordResetEmailAsync(request.Email, token, user.Name);
+            await _emailService.SendPasswordResetEmailAsync(request.Email, token, user.FullName);
         }
         catch (Exception ex)
         {

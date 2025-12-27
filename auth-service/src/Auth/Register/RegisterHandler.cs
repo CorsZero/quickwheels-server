@@ -37,24 +37,25 @@ public class RegisterHandler
             return ApiResponse.ErrorResult($"User with email '{request.Email}' already exists");
         }
 
-        // Parse role (only Customer and Provider allowed for registration)
+        // Parse role (only User allowed for registration, Admin must be created by other means)
         if (!Enum.TryParse<UserRole>(request.Role, true, out var role) || role == UserRole.Admin)
         {
-            return ApiResponse.ErrorResult("Invalid role. Must be 'Customer' or 'Provider'");
+            return ApiResponse.ErrorResult("Invalid role. Only 'User' role is allowed for registration");
         }
 
         // Hash password
         var passwordHash = _passwordHasher.Hash(request.Password);
 
         // Create user
-        var user = new User(request.Email, request.Name, passwordHash, role);
+        var user = new User(request.Email, request.FullName, request.Phone, passwordHash, role);
         await _userRepository.AddAsync(user);
 
         return ApiResponse.SuccessResult(new
         {
             user.Id,
             user.Email,
-            user.Name,
+            user.FullName,
+            user.Phone,
             Role = user.Role.ToString(),
             user.CreatedAt
         }, "User registered successfully");

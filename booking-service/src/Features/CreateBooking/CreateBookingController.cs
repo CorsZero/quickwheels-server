@@ -1,0 +1,40 @@
+using Microsoft.AspNetCore.Mvc;
+using booking_service.Shared.Types;
+
+namespace booking_service.Features.CreateBooking;
+
+[ApiController]
+[Route("api/bookings")]
+public class CreateBookingController : ControllerBase
+{
+    private readonly CreateBookingHandler _handler;
+
+    public CreateBookingController(CreateBookingHandler handler)
+    {
+        _handler = handler;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateBooking([FromBody] CreateBookingRequest request)
+    {
+        var userId = HttpContext.Items["UserId"] as Guid?;
+        if (!userId.HasValue)
+            return Unauthorized(ApiResponse.ErrorResult("Unauthorized"));
+
+        try
+        {
+            var result = await _handler.Handle(request, userId.Value);
+            return Created("", ApiResponse.SuccessResult(result));
+        }
+        catch (ArgumentException ex) {
+            return BadRequest(ApiResponse.ErrorResult(ex.Message));
+        }
+        catch (InvalidOperationException ex) {
+            return Conflict(ApiResponse.ErrorResult(ex.Message));
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, ApiResponse.ErrorResult("An error occurred while creating the booking"));
+        }
+    }
+}

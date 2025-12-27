@@ -2,8 +2,9 @@ namespace sevaLK_service_auth.Auth.Register;
 
 public record RegisterRequest(
     string Email,
-    string Name,
+    string FullName,
+    string Phone,
     string Password,
     string ConfirmPassword,
-    string Role // "Customer" or "Provider"
+    string Role // "User" or "Admin"
 );

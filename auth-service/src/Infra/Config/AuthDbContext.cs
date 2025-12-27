@@ -23,9 +23,13 @@ public class AuthDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(255);
 
-            entity.Property(u => u.Name)
+            entity.Property(u => u.FullName)
                 .IsRequired()
                 .HasMaxLength(255);
+
+            entity.Property(u => u.Phone)
+                .IsRequired()
+                .HasMaxLength(20);
 
             entity.Property(u => u.PasswordHash)
                 .IsRequired();
