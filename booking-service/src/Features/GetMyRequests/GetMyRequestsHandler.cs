@@ -32,10 +32,11 @@ public class GetMyRequestsHandler
         BookingStatus? bookingStatus = null;
         if (!string.IsNullOrEmpty(request.Status))
         {
-            if (Enum.TryParse<BookingStatus>(request.Status, true, out var parsedStatus))
+            if (!Enum.TryParse<BookingStatus>(request.Status, true, out var parsedStatus))
             {
-                bookingStatus = parsedStatus;
+                throw new ArgumentException($"Invalid status value: {request.Status}. Valid values are: Pending, Approved, Rejected, Active, Completed, Cancelled");
             }
+            bookingStatus = parsedStatus;
         }
 
         var bookings = await _bookingRepository.GetByVehicleIdsAsync(request.VehicleIds, bookingStatus, request.Page, request.Limit);
