@@ -79,11 +79,12 @@ public class BookingRepository : IBookingRepository
     {
         return await _context.Bookings
             .Where(b => b.VehicleId == vehicleId &&
-                       (b.Status == BookingStatus.Pending || 
-                        b.Status == BookingStatus.Approved || 
+                       (b.Status == BookingStatus.Approved || 
                         b.Status == BookingStatus.Active) &&
-                       b.StartDate <= endDate &&
-                       b.EndDate >= startDate)
+                       b.StartDate.HasValue &&
+                       b.EndDate.HasValue &&
+                       b.StartDate.Value <= endDate &&
+                       b.EndDate.Value >= startDate)
             .ToListAsync();
     }
 
