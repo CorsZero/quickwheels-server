@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using booking_service.Infra;
 using booking_service.Infra.Config;
 using booking_service.Shared.Middlewares;
+using booking_service.Shared.Filters;
 
 // Load environment variables from .env file
 DotNetEnv.Env.Load();
@@ -11,7 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseKestrel();
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ModelValidationFilter>();
+})
+.ConfigureApiBehaviorOptions(options =>
+{
+    options.SuppressModelStateInvalidFilter = true; // Disable default validation response
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -30,9 +30,9 @@ public class CancelBookingController : ControllerBase
 
             return Ok(ApiResponse.SuccessResult(result));
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
-            return Forbid();
+            return StatusCode(403, ApiResponse.ErrorResult(ex.Message));
         }
         catch (InvalidOperationException ex) {
             return BadRequest(ApiResponse.ErrorResult(ex.Message));
