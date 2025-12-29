@@ -102,4 +102,10 @@ public static class HttpContextExtensions
     {
         return context.Items["UserId"] != null;
     }
+
+    public static bool IsAdmin(this HttpContext context)
+    {
+        var role = context.GetUserRole();
+        return role?.ToUpper() == "ADMIN";
+    }
 }

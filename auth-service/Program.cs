@@ -6,6 +6,10 @@ using sevaLK_service_auth.Auth.RefreshToken;
 using sevaLK_service_auth.Auth.Register;
 using sevaLK_service_auth.Auth.ResetPassword;
 using sevaLK_service_auth.Auth.Profile;
+using sevaLK_service_auth.Admin.GetAllUsersAdmin;
+using sevaLK_service_auth.Admin.GetUserByIdAdmin;
+using sevaLK_service_auth.Admin.SuspendActivateUser;
+using sevaLK_service_auth.Admin.DeleteUserAdmin;
 using sevaLK_service_auth.Infra;
 using sevaLK_service_auth.Infra.Config;
 using sevaLK_service_auth.Shared.Middlewares;
@@ -35,6 +39,12 @@ builder.Services.AddScoped<ResetPasswordHandler>();
 // Profile handlers
 builder.Services.AddScoped<GetCurrentProfileHandler>();
 builder.Services.AddScoped<UpdateProfileHandler>();
+
+// Admin Handlers
+builder.Services.AddScoped<GetAllUsersAdminHandler>();
+builder.Services.AddScoped<GetUserByIdAdminHandler>();
+builder.Services.AddScoped<SuspendActivateUserHandler>();
+builder.Services.AddScoped<DeleteUserAdminHandler>();
 
 var app = builder.Build();
 

@@ -87,5 +87,15 @@ public class Booking
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void AdminOverrideStatus(BookingStatus newStatus, string? reason = null)
+    {
+        Status = newStatus;
+        if (!string.IsNullOrWhiteSpace(reason))
+        {
+            RejectionReason = reason;
+        }
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public bool IsRenter(Guid userId) => RenterId == userId;
 }
