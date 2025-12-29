@@ -5,7 +5,7 @@ using vehicle_service.Shared.Types;
 namespace vehicle_service.Features.RemoveVehicle;
 
 [ApiController]
-[Route("api/admin/vehicles")]
+[Route("api/vehicles")]
 public class RemoveVehicleController : ControllerBase
 {
     private readonly RemoveVehicleHandler _handler;
@@ -22,17 +22,18 @@ public class RemoveVehicleController : ControllerBase
         if (!userId.HasValue)
             return Unauthorized(ApiResponse.ErrorResult("Unauthorized"));
 
-        if (!HttpContext.IsAdmin())
-            return StatusCode(403, ApiResponse.ErrorResult("Admin access required"));
-
         try
         {
-            var result = await _handler.Handle(vehicleId, request);
+            var result = await _handler.Handle(vehicleId, userId.Value, request);
             return Ok(ApiResponse.SuccessResult(result, "Vehicle removed successfully"));
         }
         catch (KeyNotFoundException ex)
         {
             return NotFound(ApiResponse.ErrorResult(ex.Message));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, ApiResponse.ErrorResult(ex.Message));
         }
         catch (ArgumentException ex)
         {

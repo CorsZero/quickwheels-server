@@ -11,16 +11,14 @@ public class DeleteVehicleHandler
         _vehicleRepository = vehicleRepository;
     }
 
-    public async Task Handle(Guid vehicleId, Guid userId)
+    public async Task Handle(Guid vehicleId)
     {
         var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
 
         if (vehicle == null)
             throw new KeyNotFoundException("Vehicle not found");
 
-        if (!vehicle.IsOwner(userId))
-            throw new UnauthorizedAccessException("You can only delete your own vehicles");
-
+        // Admins can delete any vehicle - no ownership check needed
         await _vehicleRepository.DeleteAsync(vehicle);
     }
 }
