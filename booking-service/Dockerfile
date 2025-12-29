@@ -9,5 +9,5 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/publish .
-EXPOSE 5000
+EXPOSE 5002
 ENTRYPOINT ["dotnet", "booking-service.dll"]

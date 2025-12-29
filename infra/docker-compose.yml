@@ -1,0 +1,137 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: quickwheels-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - quickwheels-network
+    depends_on:
+      - auth-service
+      - vehicle-service
+      - booking-service
+    restart: unless-stopped
+
+  auth-service:
+    image: yujiro2hanma/quickwheels-auth:latest
+    container_name: quickwheels-auth-service
+    environment:
+      - DefaultConnection=Host=auth-db;Port=5432;Database=${AUTH_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - SecretKey=${JWT_SECRET_KEY}
+      - Issuer=${JWT_ISSUER}
+      - Audience=${JWT_AUDIENCE}
+      - ExpirationMinutes=${JWT_EXPIRATION_MINUTES}
+      - RefreshTokenExpirationDays=${JWT_REFRESH_EXPIRATION_DAYS}
+      - SmtpHost=${SMTP_HOST}
+      - SmtpPort=${SMTP_PORT}
+      - SmtpUsername=${SMTP_USERNAME}
+      - SmtpPassword=${SMTP_PASSWORD}
+      - FromEmail=${FROM_EMAIL}
+      - FromName=${FROM_NAME}
+    ports:
+      - "5000:5000"
+    networks:
+      - quickwheels-network
+    depends_on:
+      - auth-db
+    restart: unless-stopped
+
+  auth-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-auth-db
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
+
+  vehicle-service:
+    image: yujiro2hanma/quickwheels-vehicle:latest
+    container_name: quickwheels-vehicle-service
+    environment:
+      - DefaultConnection=Host=vehicle-db;Port=5432;Database=${VEHICLE_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+    ports:
+      - "5001:5001"
+    networks:
+      - quickwheels-network
+    depends_on:
+      - vehicle-db
+    restart: unless-stopped
+
+  vehicle-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-vehicle-db
+    environment:
+      POSTGRES_DB: ${VEHICLE_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - vehicle_db_data:/var/lib/postgresql/data
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
+
+  booking-service:
+    image: yujiro2hanma/quickwheels-booking:latest
+    container_name: quickwheels-booking-service
+    environment:
+      - DefaultConnection=Host=booking-db;Port=5432;Database=${BOOKING_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+    ports:
+      - "5002:5002"
+    networks:
+      - quickwheels-network
+    depends_on:
+      - booking-db
+    restart: unless-stopped
+
+  booking-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-booking-db
+    environment:
+      POSTGRES_DB: ${BOOKING_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - booking_db_data:/var/lib/postgresql/data
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: quickwheels-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "8081:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
+
+volumes:
+  auth_db_data:
+  vehicle_db_data:
+  booking_db_data:
+  pgadmin_data:
+
+networks:
+  quickwheels-network:
+    driver: bridge
