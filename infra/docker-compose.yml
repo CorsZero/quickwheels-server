@@ -60,6 +60,9 @@ services:
     container_name: quickwheels-vehicle-service
     environment:
       - DefaultConnection=Host=vehicle-db;Port=5432;Database=${VEHICLE_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - SecretKey=${JWT_SECRET_KEY}
+      - Issuer=${JWT_ISSUER}
+      - Audience=${JWT_AUDIENCE}
     ports:
       - "5001:5001"
     networks:
@@ -88,6 +91,9 @@ services:
     container_name: quickwheels-booking-service
     environment:
       - DefaultConnection=Host=booking-db;Port=5432;Database=${BOOKING_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - SecretKey=${JWT_SECRET_KEY}
+      - Issuer=${JWT_ISSUER}
+      - Audience=${JWT_AUDIENCE}
     ports:
       - "5002:5002"
     networks:
