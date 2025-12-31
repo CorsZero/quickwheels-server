@@ -1,7 +1,6 @@
 using sevaLK_service_auth.Infra.Repositories;
 using sevaLK_service_auth.Infra.Security;
 using sevaLK_service_auth.Shared.Middlewares;
-using sevaLK_service_auth.Shared.Helpers;
 
 namespace sevaLK_service_auth.Auth.RefreshToken;
 
@@ -37,13 +36,13 @@ public class RefreshTokenHandler
 
         if (user == null || !user.IsRefreshTokenValid())
         {
-            CookieHelper.ClearAuthCookies(httpResponse);
+            Cookie.ClearAuthCookies(httpResponse);
             return ApiResponse.ErrorResult("Invalid or expired refresh token");
         }
 
         if (!user.IsActive)
         {
-            CookieHelper.ClearAuthCookies(httpResponse);
+            Cookie.ClearAuthCookies(httpResponse);
             return ApiResponse.ErrorResult("Account is deactivated");
         }
 
@@ -59,7 +58,7 @@ public class RefreshTokenHandler
         await _userRepository.UpdateAsync(user);
 
         // Set new tokens as HttpOnly cookies
-        CookieHelper.SetAuthCookies(
+        Cookie.SetAuthCookies(
             httpResponse,
             accessToken,
             refreshToken,

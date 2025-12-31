@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using sevaLK_service_auth.Shared.Helpers;
+using sevaLK_service_auth.Infra.Security;
 
 namespace sevaLK_service_auth.Auth.RefreshToken;
 
@@ -17,7 +17,7 @@ public class RefreshTokenController : ControllerBase
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken()
     {
-        var refreshToken = CookieHelper.GetRefreshToken(Request);
+        var refreshToken = Cookie.GetRefreshToken(Request);
         var result = await _handler.Handle(refreshToken, Response);
         return result.Success ? Ok(result) : Unauthorized(result);
     }

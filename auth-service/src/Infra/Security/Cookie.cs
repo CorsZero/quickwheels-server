@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 
-namespace sevaLK_service_auth.Shared.Helpers;
+namespace sevaLK_service_auth.Infra.Security;
 
-public static class CookieHelper
+public static class Cookie
 {
     private const string AccessTokenCookie = "access_token";
     private const string RefreshTokenCookie = "refresh_token";
