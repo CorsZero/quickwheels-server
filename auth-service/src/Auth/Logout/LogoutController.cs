@@ -18,12 +18,7 @@ public class LogoutController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         var userId = HttpContext.GetUserId();
-        if (userId == null)
-        {
-            return Unauthorized(ApiResponse.ErrorResult("Not authenticated"));
-        }
-
-        var result = await _handler.Handle(userId.Value);
+        var result = await _handler.Handle(userId, Response);
         return result.Success ? Ok(result) : BadRequest(result);
     }
 }

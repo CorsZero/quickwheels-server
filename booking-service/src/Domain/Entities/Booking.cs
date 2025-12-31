@@ -7,9 +7,9 @@ public class Booking
     public Guid Id { get; private set; }
     public Guid RenterId { get; private set; }
     public Guid VehicleId { get; private set; }
-    public DateTime StartDate { get; private set; }
-    public DateTime EndDate { get; private set; }
-    public int Days { get; private set; }
+    public DateTime? StartDate { get; private set; }
+    public DateTime? EndDate { get; private set; }
+    public int? Days { get; private set; }
     public BookingStatus Status { get; private set; }
     public string? Notes { get; private set; }
     public string? RejectionReason { get; private set; }
@@ -19,14 +19,14 @@ public class Booking
     // EF Core constructor
     private Booking() { }
 
-    public Booking(Guid renterId, Guid vehicleId, DateTime startDate, DateTime endDate, string? notes = null)
+    public Booking(Guid renterId, Guid vehicleId, string? notes = null)
     {
         Id = Guid.NewGuid();
         RenterId = renterId;
         VehicleId = vehicleId;
-        StartDate = startDate.Date;
-        EndDate = endDate.Date;
-        Days = (endDate.Date - startDate.Date).Days + 1;
+        StartDate = null;
+        EndDate = null;
+        Days = null;
         Status = BookingStatus.Pending;
         Notes = notes;
         CreatedAt = DateTime.UtcNow;
@@ -59,9 +59,7 @@ public class Booking
         if (Status != BookingStatus.Approved)
             throw new InvalidOperationException("Only approved bookings can be started");
 
-        if (DateTime.UtcNow.Date < StartDate)
-            throw new InvalidOperationException("Cannot start rental before start date");
-
+        StartDate = DateTime.UtcNow;
         Status = BookingStatus.Active;
         UpdatedAt = DateTime.UtcNow;
     }
@@ -71,6 +69,11 @@ public class Booking
         if (Status != BookingStatus.Active)
             throw new InvalidOperationException("Only active rentals can be completed");
 
+        if (!StartDate.HasValue)
+            throw new InvalidOperationException("Cannot complete rental without a start date");
+
+        EndDate = DateTime.UtcNow;
+        Days = (EndDate.Value - StartDate.Value).Days + 1;
         Status = BookingStatus.Completed;
         UpdatedAt = DateTime.UtcNow;
     }
@@ -81,6 +84,16 @@ public class Booking
             throw new InvalidOperationException("Only pending bookings can be cancelled");
 
         Status = BookingStatus.Cancelled;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void AdminOverrideStatus(BookingStatus newStatus, string? reason = null)
+    {
+        Status = newStatus;
+        if (!string.IsNullOrWhiteSpace(reason))
+        {
+            RejectionReason = reason;
+        }
         UpdatedAt = DateTime.UtcNow;
     }
 

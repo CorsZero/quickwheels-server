@@ -16,7 +16,7 @@ public class LoginController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _handler.Handle(request);
+        var result = await _handler.Handle(request, Response);
         return result.Success ? Ok(result) : Unauthorized(result);
     }
 }

@@ -26,13 +26,13 @@ public class BookingDbContext : DbContext
                 .IsRequired();
 
             entity.Property(b => b.StartDate)
-                .IsRequired();
+                .IsRequired(false); 
 
             entity.Property(b => b.EndDate)
-                .IsRequired();
+                .IsRequired(false); 
 
             entity.Property(b => b.Days)
-                .IsRequired();
+                .IsRequired(false); 
 
             entity.Property(b => b.Status)
                 .IsRequired()

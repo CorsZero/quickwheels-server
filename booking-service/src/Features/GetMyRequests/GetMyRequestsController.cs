@@ -26,7 +26,11 @@ public class GetMyRequestsController : ControllerBase
             var result = await _handler.Handle(request);
             return Ok(ApiResponse.SuccessResult(result));
         }
-        catch (Exception)
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ApiResponse.ErrorResult(ex.Message));
+        }
+        catch (Exception ex)
         {
             return StatusCode(500, ApiResponse.ErrorResult("An error occurred while fetching booking requests"));
         }

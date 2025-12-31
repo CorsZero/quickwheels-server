@@ -1,4 +1,5 @@
 using sevaLK_service_auth.Infra.Repositories;
+using sevaLK_service_auth.Infra.Security;
 using sevaLK_service_auth.Shared.Middlewares;
 
 namespace sevaLK_service_auth.Auth.Logout;
@@ -12,17 +13,23 @@ public class LogoutHandler
         _userRepository = userRepository;
     }
 
-    public async Task<ApiResponse> Handle(Guid userId)
+    public async Task<ApiResponse> Handle(Guid? userId, HttpResponse httpResponse)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null)
+        // Clear cookies regardless of auth state
+        Cookie.ClearAuthCookies(httpResponse);
+
+        if (userId == null)
         {
-            return ApiResponse.ErrorResult("User not found");
+            return ApiResponse.SuccessResult(message: "Logged out successfully");
         }
 
-        // Clear refresh token
-        user.UpdateRefreshToken(null, null);
-        await _userRepository.UpdateAsync(user);
+        var user = await _userRepository.GetByIdAsync(userId.Value);
+        if (user != null)
+        {
+            // Clear refresh token in database
+            user.UpdateRefreshToken(null, null);
+            await _userRepository.UpdateAsync(user);
+        }
 
         return ApiResponse.SuccessResult(message: "Logged out successfully");
     }

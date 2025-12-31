@@ -98,6 +98,11 @@ public static class HttpContextExtensions
         return context.Items["UserRole"] as string;
     }
 
+    public static bool IsAuthenticated(this HttpContext context)
+    {
+        return context.Items["UserId"] != null;
+    }
+
     public static bool IsAdmin(this HttpContext context)
     {
         var role = context.GetUserRole();

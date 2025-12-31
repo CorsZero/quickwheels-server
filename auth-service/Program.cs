@@ -6,6 +6,10 @@ using sevaLK_service_auth.Auth.RefreshToken;
 using sevaLK_service_auth.Auth.Register;
 using sevaLK_service_auth.Auth.ResetPassword;
 using sevaLK_service_auth.Auth.Profile;
+using sevaLK_service_auth.Admin.GetAllUsersAdmin;
+using sevaLK_service_auth.Admin.GetUserByIdAdmin;
+using sevaLK_service_auth.Admin.SuspendActivateUser;
+using sevaLK_service_auth.Admin.DeleteUserAdmin;
 using sevaLK_service_auth.Infra;
 using sevaLK_service_auth.Infra.Config;
 using sevaLK_service_auth.Shared.Middlewares;
@@ -16,6 +20,17 @@ DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseKestrel();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -36,6 +51,12 @@ builder.Services.AddScoped<ResetPasswordHandler>();
 builder.Services.AddScoped<GetCurrentProfileHandler>();
 builder.Services.AddScoped<UpdateProfileHandler>();
 
+// Admin Handlers
+builder.Services.AddScoped<GetAllUsersAdminHandler>();
+builder.Services.AddScoped<GetUserByIdAdminHandler>();
+builder.Services.AddScoped<SuspendActivateUserHandler>();
+builder.Services.AddScoped<DeleteUserAdminHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -44,6 +65,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowReactApp");
 
 // Add exception handler middleware (must be early in pipeline)
 app.UseExceptionHandlerMiddleware();

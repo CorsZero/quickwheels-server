@@ -12,6 +12,9 @@ using booking_service.Features.StartRental;
 using booking_service.Features.CompleteRental;
 using booking_service.Features.CancelBooking;
 using booking_service.Features.CheckAvailability;
+using booking_service.Admin.GetAllBookingsAdmin;
+using booking_service.Admin.OverrideBookingStatus;
+using booking_service.Admin.GetBookingAnalytics;
 
 namespace booking_service.Infra;
 
@@ -45,6 +48,11 @@ public static class DependencyInjection
         services.AddScoped<CompleteRentalHandler>();
         services.AddScoped<CancelBookingHandler>();
         services.AddScoped<CheckAvailabilityHandler>();
+
+        // Admin Handlers
+        services.AddScoped<GetAllBookingsAdminHandler>();
+        services.AddScoped<OverrideBookingStatusHandler>();
+        services.AddScoped<GetBookingAnalyticsHandler>();
 
         return services;
     }

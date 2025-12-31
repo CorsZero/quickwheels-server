@@ -79,11 +79,12 @@ public class BookingRepository : IBookingRepository
     {
         return await _context.Bookings
             .Where(b => b.VehicleId == vehicleId &&
-                       (b.Status == BookingStatus.Pending || 
-                        b.Status == BookingStatus.Approved || 
+                       (b.Status == BookingStatus.Approved || 
                         b.Status == BookingStatus.Active) &&
-                       b.StartDate <= endDate &&
-                       b.EndDate >= startDate)
+                       b.StartDate.HasValue &&
+                       b.EndDate.HasValue &&
+                       b.StartDate.Value <= endDate &&
+                       b.EndDate.Value >= startDate)
             .ToListAsync();
     }
 
@@ -134,5 +135,39 @@ public class BookingRepository : IBookingRepository
             .GroupBy(b => b.Status)
             .Select(g => new { Status = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Status, x => x.Count);
+    }
+
+    public async Task<BookingAnalytics> GetAnalyticsAsync(DateTime startDate, DateTime endDate)
+    {
+        var bookingsInRange = await _context.Bookings
+            .Where(b => b.CreatedAt >= startDate && b.CreatedAt <= endDate)
+            .ToListAsync();
+
+        var bookingsByMonth = bookingsInRange
+            .GroupBy(b => b.CreatedAt.ToString("yyyy-MM"))
+            .Select(g => new MonthlyBooking
+            {
+                Month = g.Key,
+                Count = g.Count()
+            })
+            .OrderBy(m => m.Month)
+            .ToList();
+
+        var topVehicles = bookingsInRange
+            .GroupBy(b => b.VehicleId)
+            .Select(g => new TopVehicle
+            {
+                VehicleId = g.Key,
+                Bookings = g.Count()
+            })
+            .OrderByDescending(v => v.Bookings)
+            .Take(10)
+            .ToList();
+
+        return new BookingAnalytics
+        {
+            BookingsByMonth = bookingsByMonth,
+            TopVehicles = topVehicles
+        };
     }
 }
