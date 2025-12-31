@@ -1,6 +1,7 @@
 using sevaLK_service_auth.Infra.Repositories;
 using sevaLK_service_auth.Infra.Security;
 using sevaLK_service_auth.Shared.Middlewares;
+using sevaLK_service_auth.Shared.Helpers;
 
 namespace sevaLK_service_auth.Auth.Login;
 
@@ -10,20 +11,23 @@ public class LoginHandler
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtService _jwtService;
     private readonly IConfiguration _configuration;
+    private readonly IWebHostEnvironment _environment;
 
     public LoginHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
         IJwtService jwtService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _jwtService = jwtService;
         _configuration = configuration;
+        _environment = environment;
     }
 
-    public async Task<ApiResponse> Handle(LoginRequest request)
+    public async Task<ApiResponse> Handle(LoginRequest request, HttpResponse httpResponse)
     {
         // Find user by email
         var user = await _userRepository.GetByEmailAsync(request.Email);
@@ -50,15 +54,25 @@ public class LoginHandler
 
         // Save refresh token
         var refreshTokenExpiryDays = int.Parse(_configuration["JwtSettings:RefreshTokenExpirationDays"] ?? "7");
+        var accessExpiryMinutes = int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "60");
+        
         user.UpdateRefreshToken(refreshToken, DateTime.UtcNow.AddDays(refreshTokenExpiryDays));
         user.UpdateLastLogin();
         await _userRepository.UpdateAsync(user);
 
+        // Set tokens as HttpOnly cookies
+        CookieHelper.SetAuthCookies(
+            httpResponse,
+            accessToken,
+            refreshToken,
+            accessExpiryMinutes,
+            refreshTokenExpiryDays,
+            _environment.IsDevelopment()
+        );
+
         return ApiResponse.SuccessResult(new
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
-            ExpiresIn = int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "60") * 60,
+            ExpiresIn = accessExpiryMinutes * 60,
             User = new
             {
                 user.Id,
