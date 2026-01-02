@@ -30,7 +30,7 @@ public class User
         Phone = phone ?? throw new ArgumentNullException(nameof(phone));
         PasswordHash = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
         Role = role;
-        IsActive = true;
+        IsActive = false; // Start inactive until email is verified
         CreatedAt = DateTime.UtcNow;
     }
 

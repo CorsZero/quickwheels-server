@@ -128,6 +128,46 @@ public class EmailService : IEmailService
         await SendEmailAsync(toEmail, subject, body, isHtml: true);
     }
 
+    public async Task SendVerificationEmailAsync(string toEmail, Guid userId, string userName)
+    {
+        var subject = "Verify Your Email - QuickWheels";
+        var verificationLink = $"http://localhost:5000/api/auth/verify-email?id={userId}";
+        var body = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #4CAF50; color: white; padding: 20px; text-align: center; }}
+        .content {{ background-color: #f9f9f9; padding: 30px; border-radius: 5px; margin-top: 20px; }}
+        .button {{ display: inline-block; background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+        .footer {{ margin-top: 30px; font-size: 12px; color: #777; text-align: center; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h1>Welcome to QuickWheels!</h1>
+        </div>
+        <div class='content'>
+            <p>Hello <strong>{userName}</strong>,</p>
+            <p>Thank you for registering! Please verify your email by clicking the button below:</p>
+            <div style='text-align: center;'>
+                <a href='{verificationLink}' class='button'>Verify Email</a>
+            </div>
+            <p>Or copy this link: {verificationLink}</p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.UtcNow.Year} QuickWheels. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>";
+
+        await SendEmailAsync(toEmail, subject, body, isHtml: true);
+    }
+
     private async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
     {
         try

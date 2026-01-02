@@ -38,7 +38,7 @@ public class LoginHandler
         // Check if user is active
         if (!user.IsActive)
         {
-            return ApiResponse.ErrorResult("Account is deactivated. Please contact support.");
+            return ApiResponse.ErrorResult("Please verify your email before logging in. Check your inbox for the verification link.");
         }
 
         // Verify password
