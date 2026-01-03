@@ -1,15 +1,20 @@
 using vehicle_service.Domain.Enums;
 using vehicle_service.Infra.Repositories;
+using vehicle_service.Infra.Security;
 
 namespace vehicle_service.Features.GetAllVehicles;
 
 public class GetAllVehiclesHandler
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IS3StorageService _s3StorageService;
 
-    public GetAllVehiclesHandler(IVehicleRepository vehicleRepository)
+    public GetAllVehiclesHandler(
+        IVehicleRepository vehicleRepository,
+        IS3StorageService s3StorageService)
     {
         _vehicleRepository = vehicleRepository;
+        _s3StorageService = s3StorageService;
     }
 
     public async Task<object> Handle(
@@ -68,7 +73,7 @@ public class GetAllVehiclesHandler
             district = v.District,
             description = v.Description,
             features = v.GetFeaturesList(),
-            images = v.GetImagesList(),
+            images = _s3StorageService.GenerateSignedUrls(v.GetImagesList() ?? new List<string>()),
             status = v.Status.ToString().ToUpper(),
             createdAt = v.CreatedAt
         }).ToList();
