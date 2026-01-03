@@ -1,16 +1,21 @@
 using vehicle_service.Domain.Entities;
 using vehicle_service.Domain.Enums;
 using vehicle_service.Infra.Repositories;
+using vehicle_service.Shared.Services;
 
 namespace vehicle_service.Features.CreateVehicle;
 
 public class CreateVehicleHandler
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IFileUploadService _fileUploadService;
 
-    public CreateVehicleHandler(IVehicleRepository vehicleRepository)
+    public CreateVehicleHandler(
+        IVehicleRepository vehicleRepository,
+        IFileUploadService fileUploadService)
     {
         _vehicleRepository = vehicleRepository;
+        _fileUploadService = fileUploadService;
     }
 
     public async Task<object> Handle(CreateVehicleRequest request, Guid ownerId)
@@ -47,6 +52,13 @@ public class CreateVehicleHandler
         if (!Enum.TryParse<FuelType>(request.FuelType, true, out var fuelType))
             throw new ArgumentException("Invalid fuel type. Valid values: PETROL, DIESEL, ELECTRIC, HYBRID");
 
+        // Upload images to S3 if provided
+        List<string>? imageKeys = null;
+        if (request.Images != null && request.Images.Count > 0)
+        {
+            imageKeys = await _fileUploadService.UploadImagesAsync(request.Images);
+        }
+
         // Create vehicle
         var vehicle = new Vehicle(
             ownerId,
@@ -62,7 +74,7 @@ public class CreateVehicleHandler
             request.District,
             request.Description,
             request.Features,
-            request.Images
+            imageKeys
         );
 
         await _vehicleRepository.CreateAsync(vehicle);

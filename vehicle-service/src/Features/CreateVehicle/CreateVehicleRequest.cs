@@ -14,5 +14,5 @@ public class CreateVehicleRequest
     public string District { get; set; } = string.Empty;
     public string? Description { get; set; }
     public List<string>? Features { get; set; }
-    public List<string>? Images { get; set; }
+    public List<IFormFile>? Images { get; set; }
 }

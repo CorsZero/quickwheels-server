@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using vehicle_service.Infra.Config;
 using vehicle_service.Infra.Repositories;
 using vehicle_service.Infra.Security;
+using vehicle_service.Shared.Services;
 using vehicle_service.Features.GetAllVehicles;
 using vehicle_service.Features.GetVehicleById;
 using vehicle_service.Features.CreateVehicle;
@@ -13,7 +14,6 @@ using vehicle_service.Features.DeleteVehicle;
 using vehicle_service.Features.GetAllVehiclesAdmin;
 using vehicle_service.Features.RemoveVehicle;
 using vehicle_service.Features.ActivateVehicle;
-using vehicle_service.Features.UploadVehicleImages;
 
 namespace vehicle_service.Infra;
 
@@ -80,6 +80,9 @@ public static class DependencyInjection
         // S3 Storage Service
         services.AddScoped<IS3StorageService, S3StorageService>();
 
+        // File Upload Service
+        services.AddScoped<IFileUploadService, FileUploadService>();
+
         // Security - JWT validation only
         services.AddScoped<IJwtService, JwtService>();
 
@@ -93,7 +96,6 @@ public static class DependencyInjection
         services.AddScoped<UpdateVehicleHandler>();
         services.AddScoped<UpdateVehicleStatusHandler>();
         services.AddScoped<DeleteVehicleHandler>();
-        services.AddScoped<UploadVehicleImagesHandler>();
 
         // Handlers - Admin
         services.AddScoped<GetAllVehiclesAdminHandler>();

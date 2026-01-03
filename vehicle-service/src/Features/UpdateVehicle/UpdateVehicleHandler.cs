@@ -1,15 +1,20 @@
 using vehicle_service.Domain.Enums;
 using vehicle_service.Infra.Repositories;
+using vehicle_service.Shared.Services;
 
 namespace vehicle_service.Features.UpdateVehicle;
 
 public class UpdateVehicleHandler
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IFileUploadService _fileUploadService;
 
-    public UpdateVehicleHandler(IVehicleRepository vehicleRepository)
+    public UpdateVehicleHandler(
+        IVehicleRepository vehicleRepository,
+        IFileUploadService fileUploadService)
     {
         _vehicleRepository = vehicleRepository;
+        _fileUploadService = fileUploadService;
     }
 
     public async Task<object> Handle(Guid vehicleId, UpdateVehicleRequest request, Guid userId)
@@ -57,6 +62,13 @@ public class UpdateVehicleHandler
         if (request.PricePerDay.HasValue && request.PricePerDay <= 0)
             throw new ArgumentException("Price per day must be greater than 0");
 
+        // Upload new images to S3 if provided
+        List<string>? imageKeys = null;
+        if (request.Images != null && request.Images.Count > 0)
+        {
+            imageKeys = await _fileUploadService.UploadImagesAsync(request.Images);
+        }
+
         vehicle.Update(
             request.Make,
             request.Model,
@@ -70,7 +82,7 @@ public class UpdateVehicleHandler
             request.District,
             request.Description,
             request.Features,
-            request.Images
+            imageKeys
         );
 
         await _vehicleRepository.UpdateAsync(vehicle);
