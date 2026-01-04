@@ -8,6 +8,7 @@ public class User
     public string Email { get; private set; } = null!;
     public string FullName { get; private set; } = null!;
     public string Phone { get; private set; } = null!;
+    public string? ProfileImageKey { get; private set; }
     public string PasswordHash { get; private set; } = null!;
     public UserRole Role { get; private set; }
     public bool IsActive { get; private set; }
@@ -96,7 +97,7 @@ public class User
                PasswordResetTokenExpiry.Value > DateTime.UtcNow;
     }
 
-    public void UpdateProfile(string? fullName, string? phone)
+    public void UpdateProfile(string? fullName, string? phone, string? profileImageKey)
     {
         if (!string.IsNullOrEmpty(fullName) && fullName != FullName)
         {
@@ -106,6 +107,11 @@ public class User
         if (!string.IsNullOrEmpty(phone) && phone != Phone)
         {
             Phone = phone;
+        }
+
+        if (profileImageKey != null)
+        {
+            ProfileImageKey = profileImageKey;
         }
 
         UpdatedAt = DateTime.UtcNow;
