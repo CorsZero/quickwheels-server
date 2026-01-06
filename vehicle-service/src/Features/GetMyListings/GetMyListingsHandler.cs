@@ -1,14 +1,19 @@
 using vehicle_service.Infra.Repositories;
+using vehicle_service.Infra.Security;
 
 namespace vehicle_service.Features.GetMyListings;
 
 public class GetMyListingsHandler
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IS3StorageService _s3StorageService;
 
-    public GetMyListingsHandler(IVehicleRepository vehicleRepository)
+    public GetMyListingsHandler(
+        IVehicleRepository vehicleRepository,
+        IS3StorageService s3StorageService)
     {
         _vehicleRepository = vehicleRepository;
+        _s3StorageService = s3StorageService;
     }
 
     public async Task<object> Handle(Guid ownerId, int page, int limit)
@@ -32,7 +37,7 @@ public class GetMyListingsHandler
             district = v.District,
             description = v.Description,
             features = v.GetFeaturesList(),
-            images = v.GetImagesList(),
+            images = _s3StorageService.GenerateSignedUrls(v.GetImagesList() ?? new List<string>()),
             status = v.Status.ToString().ToUpper(),
             isActive = v.IsActive,
             createdAt = v.CreatedAt,

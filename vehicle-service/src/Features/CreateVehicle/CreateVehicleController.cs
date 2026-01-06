@@ -15,7 +15,7 @@ public class CreateVehicleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateVehicle([FromBody] CreateVehicleRequest request)
+    public async Task<IActionResult> CreateVehicle([FromForm] CreateVehicleRequest request)
     {
         var userId = HttpContext.Items["UserId"] as Guid?;
         if (!userId.HasValue)

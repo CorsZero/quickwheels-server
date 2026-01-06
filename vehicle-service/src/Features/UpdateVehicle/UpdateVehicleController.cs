@@ -15,7 +15,7 @@ public class UpdateVehicleController : ControllerBase
     }
 
     [HttpPut("{vehicleId:guid}")]
-    public async Task<IActionResult> UpdateVehicle(Guid vehicleId, [FromBody] UpdateVehicleRequest request)
+    public async Task<IActionResult> UpdateVehicle(Guid vehicleId, [FromForm] UpdateVehicleRequest request)
     {
         var userId = HttpContext.Items["UserId"] as Guid?;
         if (!userId.HasValue)

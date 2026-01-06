@@ -1,14 +1,19 @@
 using vehicle_service.Infra.Repositories;
+using vehicle_service.Infra.Security;
 
 namespace vehicle_service.Features.GetVehicleById;
 
 public class GetVehicleByIdHandler
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly IS3StorageService _s3StorageService;
 
-    public GetVehicleByIdHandler(IVehicleRepository vehicleRepository)
+    public GetVehicleByIdHandler(
+        IVehicleRepository vehicleRepository,
+        IS3StorageService s3StorageService)
     {
         _vehicleRepository = vehicleRepository;
+        _s3StorageService = s3StorageService;
     }
 
     public async Task<object?> Handle(Guid vehicleId)
@@ -21,6 +26,12 @@ public class GetVehicleByIdHandler
         // Only return if active (unless viewing own vehicle - handled in controller)
         if (!vehicle.IsActive)
             return null;
+
+        // Convert stored object keys to signed URLs at response time
+        var imageKeys = vehicle.GetImagesList();
+        var signedImageUrls = imageKeys != null 
+            ? _s3StorageService.GenerateSignedUrls(imageKeys) 
+            : new List<string>();
 
         return new
         {
@@ -38,7 +49,7 @@ public class GetVehicleByIdHandler
             district = vehicle.District,
             description = vehicle.Description,
             features = vehicle.GetFeaturesList(),
-            images = vehicle.GetImagesList(),
+            images = signedImageUrls, // Signed URLs instead of object keys
             status = vehicle.Status.ToString().ToUpper(),
             isActive = vehicle.IsActive,
             createdAt = vehicle.CreatedAt,

@@ -30,7 +30,7 @@ public class ProfileController : ControllerBase
     }
 
     [HttpPatch("profile")]
-    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+    public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfileRequest request)
     {
         var userId = HttpContext.GetUserId();
         if (userId == null)
