@@ -91,7 +91,15 @@ public class Vehicle
         if (district != null) District = district;
         if (description != null) Description = description;
         if (features != null) Features = JsonSerializer.Serialize(features);
-        if (images != null) Images = JsonSerializer.Serialize(images);
+        
+        // Append new images to existing images instead of replacing
+        if (images != null && images.Count > 0)
+        {
+            var existingImages = GetImagesList();
+            existingImages.AddRange(images);
+            Images = JsonSerializer.Serialize(existingImages);
+        }
+        
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -137,6 +145,13 @@ public class Vehicle
     public void Deactivate()
     {
         IsActive = false;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    // Method to set/replace entire images list (used for deletion)
+    public void SetImages(List<string> images)
+    {
+        Images = JsonSerializer.Serialize(images);
         UpdatedAt = DateTime.UtcNow;
     }
 

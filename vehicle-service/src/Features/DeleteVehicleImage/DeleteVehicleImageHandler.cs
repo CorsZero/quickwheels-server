@@ -67,14 +67,13 @@ public class DeleteVehicleImageHandler
         }
 
         // Update the vehicle with the new images list
-        vehicle.Update(images: updatedImages);
+        vehicle.SetImages(updatedImages);
         await _vehicleRepository.UpdateAsync(vehicle);
 
         return new
         {
             message = "Image deleted successfully",
             deletedImageUrl = matchingImage,
-            remainingImages = updatedImages,
             remainingImagesCount = updatedImages.Count
         };
     }
