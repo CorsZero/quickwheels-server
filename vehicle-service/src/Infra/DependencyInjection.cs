@@ -11,6 +11,7 @@ using vehicle_service.Features.GetMyListings;
 using vehicle_service.Features.UpdateVehicle;
 using vehicle_service.Features.UpdateVehicleStatus;
 using vehicle_service.Features.DeleteVehicle;
+using vehicle_service.Features.DeleteVehicleImage;
 using vehicle_service.Features.GetAllVehiclesAdmin;
 using vehicle_service.Features.RemoveVehicle;
 using vehicle_service.Features.ActivateVehicle;
@@ -96,6 +97,7 @@ public static class DependencyInjection
         services.AddScoped<UpdateVehicleHandler>();
         services.AddScoped<UpdateVehicleStatusHandler>();
         services.AddScoped<DeleteVehicleHandler>();
+        services.AddScoped<DeleteVehicleImageHandler>();
 
         // Handlers - Admin
         services.AddScoped<GetAllVehiclesAdminHandler>();

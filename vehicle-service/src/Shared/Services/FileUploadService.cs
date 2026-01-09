@@ -5,6 +5,7 @@ namespace vehicle_service.Shared.Services;
 public interface IFileUploadService
 {
     Task<List<string>> UploadImagesAsync(List<IFormFile> images);
+    Task DeleteImageAsync(string imageUrl);
 }
 
 public class FileUploadService : IFileUploadService
@@ -55,5 +56,22 @@ public class FileUploadService : IFileUploadService
         }
 
         return uploadedKeys;
+    }
+
+    public async Task DeleteImageAsync(string imageUrl)
+    {
+        if (string.IsNullOrEmpty(imageUrl))
+            return;
+
+        try
+        {
+            await _s3StorageService.DeleteFileAsync(imageUrl);
+            _logger.LogInformation("Successfully deleted image: {ImageUrl}", imageUrl);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete image {ImageUrl}", imageUrl);
+            throw;
+        }
     }
 }
