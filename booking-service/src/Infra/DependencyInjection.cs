@@ -5,6 +5,7 @@ using booking_service.Infra.Security;
 using booking_service.Features.CreateBooking;
 using booking_service.Features.GetMyRentals;
 using booking_service.Features.GetMyRequests;
+using booking_service.Features.GetAllIncomingRequests;
 using booking_service.Features.GetBookingDetails;
 using booking_service.Features.ApproveBooking;
 using booking_service.Features.RejectBooking;
@@ -41,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<CreateBookingHandler>();
         services.AddScoped<GetMyRentalsHandler>();
         services.AddScoped<GetMyRequestsHandler>();
+        services.AddScoped<GetAllIncomingRequestsHandler>();
         services.AddScoped<GetBookingDetailsHandler>();
         services.AddScoped<ApproveBookingHandler>();
         services.AddScoped<RejectBookingHandler>();
