@@ -6,6 +6,7 @@ using sevaLK_service_auth.Auth.RefreshToken;
 using sevaLK_service_auth.Auth.Register;
 using sevaLK_service_auth.Auth.ResetPassword;
 using sevaLK_service_auth.Auth.Profile;
+using sevaLK_service_auth.Auth.Profile.DeleteProfileImage;
 using sevaLK_service_auth.Admin.GetAllUsersAdmin;
 using sevaLK_service_auth.Admin.GetUserByIdAdmin;
 using sevaLK_service_auth.Admin.SuspendActivateUser;
@@ -50,6 +51,7 @@ builder.Services.AddScoped<ResetPasswordHandler>();
 // Profile handlers
 builder.Services.AddScoped<GetCurrentProfileHandler>();
 builder.Services.AddScoped<UpdateProfileHandler>();
+builder.Services.AddScoped<DeleteProfileImageHandler>();
 
 // Admin Handlers
 builder.Services.AddScoped<GetAllUsersAdminHandler>();

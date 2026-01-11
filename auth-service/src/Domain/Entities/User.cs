@@ -116,4 +116,11 @@ public class User
 
         UpdatedAt = DateTime.UtcNow;
     }
+
+    // Method to clear profile image (used for deletion)
+    public void ClearProfileImage()
+    {
+        ProfileImageKey = null;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
