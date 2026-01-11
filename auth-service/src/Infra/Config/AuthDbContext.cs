@@ -31,6 +31,9 @@ public class AuthDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(20);
 
+            entity.Property(u => u.Address)
+                .HasMaxLength(500);
+
             entity.Property(u => u.ProfileImageKey)
                 .HasMaxLength(500);
 
