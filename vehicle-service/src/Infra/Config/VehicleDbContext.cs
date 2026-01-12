@@ -63,6 +63,12 @@ public class VehicleDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
 
+            entity.Property(v => v.Latitude)
+                .HasPrecision(10, 7);
+
+            entity.Property(v => v.Longitude)
+                .HasPrecision(10, 7);
+
             entity.Property(v => v.Description)
                 .HasColumnType("text");
 

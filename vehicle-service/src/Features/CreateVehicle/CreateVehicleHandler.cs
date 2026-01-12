@@ -74,7 +74,9 @@ public class CreateVehicleHandler
             request.District,
             request.Description,
             request.Features,
-            imageKeys
+            imageKeys,
+            request.Latitude,
+            request.Longitude
         );
 
         await _vehicleRepository.CreateAsync(vehicle);
@@ -93,6 +95,8 @@ public class CreateVehicleHandler
             pricePerDay = vehicle.PricePerDay,
             location = vehicle.Location,
             district = vehicle.District,
+            latitude = vehicle.Latitude,
+            longitude = vehicle.Longitude,
             description = vehicle.Description,
             features = vehicle.GetFeaturesList(),
             images = vehicle.GetImagesList(),
