@@ -22,7 +22,7 @@ public static class Cookie
         {
             HttpOnly = true,
             Secure = !isDevelopment, // false in dev for http://localhost
-            SameSite = SameSiteMode.Strict,
+            SameSite = isDevelopment ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddMinutes(accessTokenExpiryMinutes),
             Path = "/"
         };
@@ -31,7 +31,7 @@ public static class Cookie
         {
             HttpOnly = true,
             Secure = !isDevelopment,
-            SameSite = SameSiteMode.Strict,
+            SameSite = isDevelopment ? SameSiteMode.Strict : SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(refreshTokenExpiryDays),
             Path = "/api/auth" // Only sent to auth endpoints
         };
@@ -49,7 +49,7 @@ public static class Cookie
         {
             HttpOnly = true,
             Secure = false,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1),
             Path = "/"
         };
@@ -58,7 +58,7 @@ public static class Cookie
         {
             HttpOnly = true,
             Secure = false,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(-1),
             Path = "/api/auth"
         };
