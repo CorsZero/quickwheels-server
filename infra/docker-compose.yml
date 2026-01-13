@@ -1,27 +1,65 @@
-version: "3.9"
-
 services:
-  client:
-    image: yujiro2hanma/quickwheels-client:latest
-    container_name: quickwheels-client
+  auth-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-auth-db
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
     networks:
       - quickwheels-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${AUTH_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
-  nginx:
-    image: nginx:alpine
-    container_name: quickwheels-nginx
+  vehicle-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-vehicle-db
+    environment:
+      POSTGRES_DB: ${VEHICLE_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "80:80"
+      - "5433:5432"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - vehicle_db_data:/var/lib/postgresql/data
     networks:
       - quickwheels-network
-    depends_on:
-      - client
-      - auth-service
-      - vehicle-service
-      - booking-service
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${VEHICLE_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  booking-db:
+    image: postgres:16-alpine
+    container_name: quickwheels-booking-db
+    environment:
+      POSTGRES_DB: ${BOOKING_DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - booking_db_data:/var/lib/postgresql/data
+    networks:
+      - quickwheels-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${BOOKING_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
 
   auth-service:
@@ -50,22 +88,8 @@ services:
     networks:
       - quickwheels-network
     depends_on:
-      - auth-db
-    restart: unless-stopped
-
-  auth-db:
-    image: postgres:16-alpine
-    container_name: quickwheels-auth-db
-    environment:
-      POSTGRES_DB: ${AUTH_DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
-    volumes:
-      - auth_db_data:/var/lib/postgresql/data
-    networks:
-      - quickwheels-network
+      auth-db:
+        condition: service_healthy
     restart: unless-stopped
 
   vehicle-service:
@@ -86,22 +110,8 @@ services:
     networks:
       - quickwheels-network
     depends_on:
-      - vehicle-db
-    restart: unless-stopped
-
-  vehicle-db:
-    image: postgres:16-alpine
-    container_name: quickwheels-vehicle-db
-    environment:
-      POSTGRES_DB: ${VEHICLE_DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5433:5432"
-    volumes:
-      - vehicle_db_data:/var/lib/postgresql/data
-    networks:
-      - quickwheels-network
+      vehicle-db:
+        condition: service_healthy
     restart: unless-stopped
 
   booking-service:
@@ -122,23 +132,32 @@ services:
     networks:
       - quickwheels-network
     depends_on:
-      - booking-db
+      booking-db:
+        condition: service_healthy
     restart: unless-stopped
 
-  booking-db:
-    image: postgres:16-alpine
-    container_name: quickwheels-booking-db
-    environment:
-      POSTGRES_DB: ${BOOKING_DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-
-    ports:
-      - "5434:5432"
-    volumes:
-      - booking_db_data:/var/lib/postgresql/data
+  client:
+    image: yujiro2hanma/quickwheels-client:latest
+    container_name: quickwheels-client
     networks:
       - quickwheels-network
+    depends_on:
+      - auth-service
+      - vehicle-service
+      - booking-service
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: quickwheels-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - quickwheels-network
+    depends_on:
+      - client
     restart: unless-stopped
 
   pgadmin:
@@ -154,6 +173,13 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     networks:
       - quickwheels-network
+    depends_on:
+      auth-db:
+        condition: service_healthy
+      vehicle-db:
+        condition: service_healthy
+      booking-db:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
