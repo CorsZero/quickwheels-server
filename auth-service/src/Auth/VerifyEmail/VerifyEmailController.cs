@@ -8,30 +8,37 @@ namespace sevaLK_service_auth.Auth.VerifyEmail;
 public class VerifyEmailController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
 
-    public VerifyEmailController(IUserRepository userRepository)
+    public VerifyEmailController(IUserRepository userRepository, IConfiguration configuration)
     {
         _userRepository = userRepository;
+        _configuration = configuration;
     }
 
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] Guid id)
     {
+        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+        
         var user = await _userRepository.GetByIdAsync(id);
         
         if (user == null)
         {
-            return BadRequest("Invalid verification link");
+            // Redirect to frontend with error
+            return Redirect($"{frontendUrl}/email-verified?status=error&message=Invalid+verification+link");
         }
 
         if (user.IsActive)
         {
-            return Ok("Email already verified");
+            // Redirect to frontend with already verified status
+            return Redirect($"{frontendUrl}/email-verified?status=already-verified");
         }
 
         user.Activate();
         await _userRepository.UpdateAsync(user);
 
-        return Ok("Email verified successfully! You can now log in.");
+        // Redirect to frontend with success
+        return Redirect($"{frontendUrl}/email-verified?status=success");
     }
 }
