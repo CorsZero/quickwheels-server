@@ -13,7 +13,7 @@ public class EmailService : IEmailService
     private readonly string _smtpPassword;
     private readonly string _fromEmail;
     private readonly string _fromName;
-    private readonly string _frontendUrl;
+    private readonly string _instanceOrigin;
 
     public EmailService(IConfiguration configuration)
     {
@@ -24,7 +24,7 @@ public class EmailService : IEmailService
         _smtpPassword = configuration["SmtpPassword"] ?? "";
         _fromEmail = configuration["FromEmail"] ?? "";
         _fromName = configuration["FromName"] ?? "SevaLK";
-        _frontendUrl = configuration["FrontendUrl"] ?? "http://localhost:5173";
+        _instanceOrigin = configuration["InstanceOrigin"] ?? "http://localhost:5173";
     }
 
     public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken, string userName)
@@ -134,7 +134,7 @@ public class EmailService : IEmailService
     {
         var subject = "Verify Your Email - QuickWheels";
         // Backend verification endpoint that will process the verification
-        var backendVerificationUrl = $"{_frontendUrl}/api/auth/verify-email?id={userId}";
+        var backendVerificationUrl = $"{_instanceOrigin}/api/auth/verify-email?id={userId}";
         var body = $@"
 <!DOCTYPE html>
 <html>

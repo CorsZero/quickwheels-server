@@ -18,11 +18,15 @@ public static class Cookie
         int refreshTokenExpiryDays,
         bool isDevelopment = false)
     {
+        // Use Secure flag only in production with HTTPS
+        // Set to false for HTTP deployments (change to true if using HTTPS in production)
+        var useSecureCookies = false;
+        
         var accessCookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = !isDevelopment, // false in dev for http://localhost
-            SameSite = isDevelopment ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Secure = useSecureCookies && !isDevelopment,
+            SameSite = SameSiteMode.Lax, // Lax for production compatibility
             Expires = DateTimeOffset.UtcNow.AddMinutes(accessTokenExpiryMinutes),
             Path = "/"
         };
@@ -30,8 +34,8 @@ public static class Cookie
         var refreshCookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = !isDevelopment,
-            SameSite = isDevelopment ? SameSiteMode.Strict : SameSiteMode.Lax,
+            Secure = useSecureCookies && !isDevelopment,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddDays(refreshTokenExpiryDays),
             Path = "/api/auth" // Only sent to auth endpoints
         };

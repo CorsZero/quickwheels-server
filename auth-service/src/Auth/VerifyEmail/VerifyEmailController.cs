@@ -19,7 +19,7 @@ public class VerifyEmailController : ControllerBase
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] Guid id)
     {
-        var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:5173";
+        var frontendUrl = _configuration["InstanceOrigin"] ?? "http://localhost:5173";
         
         var user = await _userRepository.GetByIdAsync(id);
         
