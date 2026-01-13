@@ -12,6 +12,8 @@ public class CreateVehicleRequest
     public decimal PricePerDay { get; set; }
     public string Location { get; set; } = string.Empty;
     public string District { get; set; } = string.Empty;
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public string? Description { get; set; }
     public List<string>? Features { get; set; }
     public List<IFormFile>? Images { get; set; }

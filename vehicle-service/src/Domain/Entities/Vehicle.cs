@@ -17,6 +17,8 @@ public class Vehicle
     public decimal PricePerDay { get; private set; }
     public string Location { get; private set; } = string.Empty;
     public string District { get; private set; } = string.Empty;
+    public double? Latitude { get; private set; }
+    public double? Longitude { get; private set; }
     public string? Description { get; private set; }
     public string? Features { get; private set; } // JSON array stored as string
     public string? Images { get; private set; } // JSON array stored as string
@@ -42,7 +44,9 @@ public class Vehicle
         string district,
         string? description = null,
         List<string>? features = null,
-        List<string>? images = null)
+        List<string>? images = null,
+        double? latitude = null,
+        double? longitude = null)
     {
         Id = Guid.NewGuid();
         OwnerId = ownerId;
@@ -56,6 +60,8 @@ public class Vehicle
         PricePerDay = pricePerDay;
         Location = location;
         District = district;
+        Latitude = latitude;
+        Longitude = longitude;
         Description = description;
         Features = features != null ? JsonSerializer.Serialize(features) : null;
         Images = images != null ? JsonSerializer.Serialize(images) : null;
@@ -77,7 +83,9 @@ public class Vehicle
         string? district = null,
         string? description = null,
         List<string>? features = null,
-        List<string>? images = null)
+        List<string>? images = null,
+        double? latitude = null,
+        double? longitude = null)
     {
         if (make != null) Make = make;
         if (model != null) Model = model;
@@ -91,6 +99,8 @@ public class Vehicle
         if (district != null) District = district;
         if (description != null) Description = description;
         if (features != null) Features = JsonSerializer.Serialize(features);
+        if (latitude.HasValue) Latitude = latitude.Value;
+        if (longitude.HasValue) Longitude = longitude.Value;
         
         // Append new images to existing images instead of replacing
         if (images != null && images.Count > 0)

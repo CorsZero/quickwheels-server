@@ -47,6 +47,8 @@ public class GetVehicleByIdHandler
             pricePerDay = vehicle.PricePerDay,
             location = vehicle.Location,
             district = vehicle.District,
+            latitude = vehicle.Latitude,
+            longitude = vehicle.Longitude,
             description = vehicle.Description,
             features = vehicle.GetFeaturesList(),
             images = signedImageUrls, // Signed URLs instead of object keys

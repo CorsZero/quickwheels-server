@@ -8,6 +8,7 @@ public class User
     public string Email { get; private set; } = null!;
     public string FullName { get; private set; } = null!;
     public string Phone { get; private set; } = null!;
+    public string? Address { get; private set; }
     public string? ProfileImageKey { get; private set; }
     public string PasswordHash { get; private set; } = null!;
     public UserRole Role { get; private set; }
@@ -97,7 +98,7 @@ public class User
                PasswordResetTokenExpiry.Value > DateTime.UtcNow;
     }
 
-    public void UpdateProfile(string? fullName, string? phone, string? profileImageKey)
+    public void UpdateProfile(string? fullName, string? phone, string? address, string? profileImageKey)
     {
         if (!string.IsNullOrEmpty(fullName) && fullName != FullName)
         {
@@ -109,11 +110,23 @@ public class User
             Phone = phone;
         }
 
+        if (address != null && address != Address)
+        {
+            Address = address;
+        }
+
         if (profileImageKey != null)
         {
             ProfileImageKey = profileImageKey;
         }
 
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    // Method to clear profile image (used for deletion)
+    public void ClearProfileImage()
+    {
+        ProfileImageKey = null;
         UpdatedAt = DateTime.UtcNow;
     }
 }

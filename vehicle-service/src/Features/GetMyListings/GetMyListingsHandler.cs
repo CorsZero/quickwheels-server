@@ -35,6 +35,8 @@ public class GetMyListingsHandler
             pricePerDay = v.PricePerDay,
             location = v.Location,
             district = v.District,
+            latitude = v.Latitude,
+            longitude = v.Longitude,
             description = v.Description,
             features = v.GetFeaturesList(),
             images = _s3StorageService.GenerateSignedUrls(v.GetImagesList() ?? new List<string>()),

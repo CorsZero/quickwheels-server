@@ -13,6 +13,7 @@ public class EmailService : IEmailService
     private readonly string _smtpPassword;
     private readonly string _fromEmail;
     private readonly string _fromName;
+    private readonly string _instanceOrigin;
 
     public EmailService(IConfiguration configuration)
     {
@@ -23,6 +24,7 @@ public class EmailService : IEmailService
         _smtpPassword = configuration["SmtpPassword"] ?? "";
         _fromEmail = configuration["FromEmail"] ?? "";
         _fromName = configuration["FromName"] ?? "SevaLK";
+        _instanceOrigin = configuration["InstanceOrigin"] ?? "http://localhost:5173";
     }
 
     public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken, string userName)
@@ -131,7 +133,8 @@ public class EmailService : IEmailService
     public async Task SendVerificationEmailAsync(string toEmail, Guid userId, string userName)
     {
         var subject = "Verify Your Email - QuickWheels";
-        var verificationLink = $"http://localhost:5000/api/auth/verify-email?id={userId}";
+        // Backend verification endpoint that will process the verification
+        var backendVerificationUrl = $"{_instanceOrigin}/api/auth/verify-email?id={userId}";
         var body = $@"
 <!DOCTYPE html>
 <html>
@@ -154,9 +157,9 @@ public class EmailService : IEmailService
             <p>Hello <strong>{userName}</strong>,</p>
             <p>Thank you for registering! Please verify your email by clicking the button below:</p>
             <div style='text-align: center;'>
-                <a href='{verificationLink}' class='button'>Verify Email</a>
+                <a href='{backendVerificationUrl}' class='button'>Verify Email</a>
             </div>
-            <p>Or copy this link: {verificationLink}</p>
+            <p>Or copy this link: {backendVerificationUrl}</p>
         </div>
         <div class='footer'>
             <p>&copy; {DateTime.UtcNow.Year} QuickWheels. All rights reserved.</p>

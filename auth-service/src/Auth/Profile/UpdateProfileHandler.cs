@@ -27,6 +27,7 @@ public class UpdateProfileHandler
 
         if (string.IsNullOrEmpty(request.FullName) && 
             string.IsNullOrEmpty(request.Phone) && 
+            string.IsNullOrEmpty(request.Address) &&
             request.ProfileImage == null)
         {
             return ApiResponse.ErrorResult("No changes provided");
@@ -39,7 +40,7 @@ public class UpdateProfileHandler
             profileImageKey = await _fileUploadService.UploadProfileImageAsync(request.ProfileImage);
         }
 
-        user.UpdateProfile(request.FullName, request.Phone, profileImageKey);
+        user.UpdateProfile(request.FullName, request.Phone, request.Address, profileImageKey);
         await _userRepository.UpdateAsync(user);
 
         return ApiResponse.SuccessResult(new

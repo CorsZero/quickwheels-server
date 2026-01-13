@@ -38,6 +38,7 @@ public class GetCurrentProfileHandler
             user.Email,
             user.FullName,
             user.Phone,
+            user.Address,
             ProfileImage = profileImageUrl,
             Role = user.Role.ToString(),
             user.IsActive,
