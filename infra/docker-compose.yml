@@ -1,6 +1,13 @@
 version: "3.9"
 
 services:
+  client:
+    image: yujiro2hanma/quickwheels-client:latest
+    container_name: quickwheels-client
+    networks:
+      - quickwheels-network
+    restart: unless-stopped
+
   nginx:
     image: nginx:alpine
     container_name: quickwheels-nginx
@@ -11,6 +18,7 @@ services:
     networks:
       - quickwheels-network
     depends_on:
+      - client
       - auth-service
       - vehicle-service
       - booking-service
@@ -124,7 +132,7 @@ services:
       POSTGRES_DB: ${BOOKING_DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      
+
     ports:
       - "5434:5432"
     volumes:
