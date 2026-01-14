@@ -24,7 +24,7 @@ public class EmailService : IEmailService
         _smtpPassword = configuration["SmtpPassword"] ?? "";
         _fromEmail = configuration["FromEmail"] ?? "";
         _fromName = configuration["FromName"] ?? "SevaLK";
-        _instanceOrigin = configuration["InstanceOrigin"] ?? "http://localhost:5173";
+        _instanceOrigin = configuration["EMAIL_VERIFICATION_URL"] ;
     }
 
     public async Task SendPasswordResetEmailAsync(string toEmail, string resetToken, string userName)

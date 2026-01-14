@@ -78,7 +78,8 @@ services:
       - SmtpPassword=${SMTP_PASSWORD}
       - FromEmail=${FROM_EMAIL}
       - FromName=${FROM_NAME}
-      - InstanceOrigin=${INSTANCE_ORIGIN}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - EMAIL_VERIFICATION_URL=${EMAIL_VERIFICATION_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
@@ -101,7 +102,7 @@ services:
       - SecretKey=${JWT_SECRET_KEY}
       - Issuer=${JWT_ISSUER}
       - Audience=${JWT_AUDIENCE}
-      - INSTANCE_ORIGIN=${INSTANCE_ORIGIN}
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
@@ -124,7 +125,7 @@ services:
       - SecretKey=${JWT_SECRET_KEY}
       - Issuer=${JWT_ISSUER}
       - Audience=${JWT_AUDIENCE}
-      - INSTANCE_ORIGIN=${INSTANCE_ORIGIN}
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}

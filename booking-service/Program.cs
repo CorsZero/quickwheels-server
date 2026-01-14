@@ -15,8 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        var instanceOrigin = Environment.GetEnvironmentVariable("INSTANCE_ORIGIN") 
-            ?? "http://localhost:5173";
+        var instanceOrigin = Environment.GetEnvironmentVariable("CORS_ORIGIN"); 
         
         policy.WithOrigins(instanceOrigin)
               .AllowAnyMethod()
