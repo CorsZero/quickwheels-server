@@ -41,27 +41,6 @@ services:
       start_period: 10s
     restart: unless-stopped
 
-  booking-db:
-    image: postgres:16-alpine
-    container_name: quickwheels-booking-db
-    environment:
-      POSTGRES_DB: ${BOOKING_DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5434:5432"
-    volumes:
-      - booking_db_data:/var/lib/postgresql/data
-    networks:
-      - quickwheels-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${BOOKING_DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    restart: unless-stopped
-
   auth-service:
     image: yujiro2hanma/quickwheels-auth:latest
     container_name: quickwheels-auth-service
@@ -78,7 +57,8 @@ services:
       - SmtpPassword=${SMTP_PASSWORD}
       - FromEmail=${FROM_EMAIL}
       - FromName=${FROM_NAME}
-      - InstanceOrigin=${INSTANCE_ORIGIN}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - EMAIL_VERIFICATION_URL=${EMAIL_VERIFICATION_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
@@ -101,7 +81,7 @@ services:
       - SecretKey=${JWT_SECRET_KEY}
       - Issuer=${JWT_ISSUER}
       - Audience=${JWT_AUDIENCE}
-      - INSTANCE_ORIGIN=${INSTANCE_ORIGIN}
+      - CORS_ORIGIN=${CORS_ORIGIN}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
@@ -116,29 +96,6 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  booking-service:
-    image: yujiro2hanma/quickwheels-booking:latest
-    container_name: quickwheels-booking-service
-    environment:
-      - DefaultConnection=Host=booking-db;Port=5432;Database=${BOOKING_DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
-      - SecretKey=${JWT_SECRET_KEY}
-      - Issuer=${JWT_ISSUER}
-      - Audience=${JWT_AUDIENCE}
-      - INSTANCE_ORIGIN=${INSTANCE_ORIGIN}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_REGION=${AWS_REGION}
-      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
-      - AWS_S3_SIGNED_URL_EXPIRY_MINUTES=${AWS_S3_SIGNED_URL_EXPIRY_MINUTES}
-    ports:
-      - "5002:5002"
-    networks:
-      - quickwheels-network
-    depends_on:
-      booking-db:
-        condition: service_healthy
-    restart: unless-stopped
-
   client:
     image: yujiro2hanma/quickwheels-client:latest
     container_name: quickwheels-client
@@ -147,7 +104,6 @@ services:
     depends_on:
       - auth-service
       - vehicle-service
-      - booking-service
     restart: unless-stopped
 
   nginx:
@@ -163,33 +119,9 @@ services:
       - client
     restart: unless-stopped
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: quickwheels-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    ports:
-      - "8081:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    networks:
-      - quickwheels-network
-    depends_on:
-      auth-db:
-        condition: service_healthy
-      vehicle-db:
-        condition: service_healthy
-      booking-db:
-        condition: service_healthy
-    restart: unless-stopped
-
 volumes:
   auth_db_data:
   vehicle_db_data:
-  booking_db_data:
-  pgadmin_data:
 
 networks:
   quickwheels-network:
