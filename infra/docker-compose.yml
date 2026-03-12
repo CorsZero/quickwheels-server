@@ -6,8 +6,6 @@ services:
       POSTGRES_DB: ${AUTH_DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     networks:
@@ -27,8 +25,6 @@ services:
       POSTGRES_DB: ${VEHICLE_DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5433:5432"
     volumes:
       - vehicle_db_data:/var/lib/postgresql/data
     networks:
@@ -58,14 +54,11 @@ services:
       - FromEmail=${FROM_EMAIL}
       - FromName=${FROM_NAME}
       - CORS_ORIGIN=${CORS_ORIGIN}
-      - EMAIL_VERIFICATION_URL=${EMAIL_VERIFICATION_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - AWS_S3_SIGNED_URL_EXPIRY_MINUTES=${AWS_S3_SIGNED_URL_EXPIRY_MINUTES}
-    ports:
-      - "5000:5000"
     networks:
       - quickwheels-network
     depends_on:
@@ -87,8 +80,6 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - AWS_S3_SIGNED_URL_EXPIRY_MINUTES=${AWS_S3_SIGNED_URL_EXPIRY_MINUTES}
-    ports:
-      - "5001:5001"
     networks:
       - quickwheels-network
     depends_on:
